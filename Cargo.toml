@@ -1,0 +1,18 @@
+[package]
+name = "rs-frontend"
+version = "0.1.0"
+edition = "2024"
+build = "build.rs"
+
+[workspace]
+members = ["magik"]
+
+[dependencies]
+axum = "0.8.4"
+tokio = "1.45.1"
+magik = { path = "magik" }
+tower = "0.5.2"
+tower-http = { version = "0.6.6", features = ["fs"] }
+
+[build-dependencies]
+magik = { path = "magik" }
