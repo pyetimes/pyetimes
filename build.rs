@@ -1,3 +1,3 @@
 fn main() {
-    magik::build("templates").expect("Failed to build templates");
+    magik::build("pages").expect("Failed to build templates");
 }

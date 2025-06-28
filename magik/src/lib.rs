@@ -2,6 +2,9 @@ use std::path;
 
 use crate::template::Template;
 
+pub use content_builder::ContentBuilder;
+
+mod content_builder;
 mod parser;
 mod template;
 
@@ -25,13 +28,18 @@ pub fn build(path: &str) -> Result<(), String> {
     Ok(())
 }
 
+#[cfg(test)]
 mod test {
-    use super::*;
+    use super::from_string;
 
     #[test]
     fn test_from_str() {
-        let result = from_string("<h1>Hello, World!</h1>");
-        println!("Result: {}", result.render());
-        assert!(result.render() == "<h1>Hello, World!</h1>");
+        let mut template = from_string("<h1>{{ greet }}, {{ place }}!</h1>");
+
+        template.set("greet", "Hello");
+        template.set("place", "World");
+
+        println!("Result: {}", template.render());
+        assert!(template.render() == "<h1>Hello, World!</h1>");
     }
 }
