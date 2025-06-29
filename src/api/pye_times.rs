@@ -10,7 +10,7 @@ pub fn routes() -> Router<AppState> {
         .nest_service("/favicon.png", ServeFile::new("static/favicon.png"))
 }
 
-async fn index(State(state): State<AppState>) -> Html<String> {
+async fn index(State(_state): State<AppState>) -> Html<String> {
     let mut layout = magik::get("./pages/layout.html");
 
     let mut builder = magik::ContentBuilder::new();

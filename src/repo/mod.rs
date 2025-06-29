@@ -1,5 +1,5 @@
+mod articles;
 mod authors;
-mod users;
 
+pub use articles::ArticlesRepo;
 pub use authors::AuthorsRepo;
-pub use users::UsersRepo;

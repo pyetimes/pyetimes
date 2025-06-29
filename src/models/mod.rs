@@ -1,7 +1,7 @@
 mod article;
 mod author;
-mod user;
+mod error;
 
-pub use article::Article;
-pub use author::Author;
-pub use user::User;
+pub use article::{Article, ArticleCreate};
+pub use author::{Author, AuthorCreate, AuthorCredentials};
+pub use error::ErrorPayload;

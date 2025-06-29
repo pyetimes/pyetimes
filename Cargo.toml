@@ -12,7 +12,7 @@ axum = "0.8.4"
 tokio = "1.45.1"
 magik = { path = "magik" }
 tower = "0.5.2"
-tower-http = { version = "0.6.6", features = ["fs"] }
+tower-http = { version = "0.6.6", features = ["fs", "trace"] }
 sqlx = { version = "0.8.6", features = [
     "runtime-tokio-rustls", # Runtime async y TLS
     "postgres",             # Driver de PostgreSQL
@@ -23,6 +23,10 @@ dotenv = "0.15.0"
 serde = "1.0.219"
 serde_json = "1.0.140"
 chrono = { version = "0.4.41", features = ["serde"] }
+tracing-subscriber = "0.3.19"
+tracing = "0.1.41"
+bcrypt = "0.17.0"
+zeroize = "1.8.1"
 
 [build-dependencies]
 magik = { path = "magik" }
