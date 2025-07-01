@@ -47,6 +47,37 @@ async fn post(
 
     let author = author.unwrap();
 
+    let article = ArticlesRepo::get_by_slug(&state.db, &info.slug).await;
+
+    if article.is_ok() {
+        let article = article.unwrap();
+
+        if article.author_id != author.id {
+            return Err(ErrorPayload::new(
+                StatusCode::FORBIDDEN,
+                "You can only update your own articles".to_string(),
+            ));
+        }
+
+        let article = ArticlesRepo::update(
+            &state.db,
+            &info.title,
+            &info.content,
+            &info.tags,
+            &info.excerpt,
+        )
+        .await;
+
+        if let Err(err) = article {
+            return Err(ErrorPayload::new(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Error updating article: {}", err),
+            ));
+        }
+
+        return Ok(Json(article.unwrap()));
+    }
+
     let article = ArticlesRepo::create(&state.db, author.id, &info).await;
 
     if let Err(ref err) = article {

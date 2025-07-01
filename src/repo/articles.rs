@@ -5,6 +5,11 @@ use crate::models::{Article, ArticleCreate};
 pub struct ArticlesRepo;
 
 impl ArticlesRepo {
+    // function to lowercase the tags
+    pub fn lowercase_tags(tags: &Vec<String>) -> Vec<String> {
+        tags.iter().map(|tag| tag.to_lowercase()).collect()
+    }
+
     pub async fn create(
         db: &PgPool,
         author_id: i32,
@@ -21,7 +26,7 @@ impl ArticlesRepo {
             .bind(&article.slug)
             .bind(&article.content)
             .bind(author_id)
-            .bind(&article.tags)
+            .bind(&ArticlesRepo::lowercase_tags(&article.tags))
             .bind(&article.excerpt)
             .fetch_one(db)
             .await?;
@@ -32,6 +37,31 @@ impl ArticlesRepo {
     pub async fn get_by_slug(db: &PgPool, title: &str) -> Result<Article, sqlx::Error> {
         let query = "SELECT * FROM articles WHERE slug = $1";
         let article = sqlx::query_as::<_, Article>(query)
+            .bind(title)
+            .fetch_one(db)
+            .await?;
+
+        Ok(article)
+    }
+
+    pub async fn update(
+        db: &PgPool,
+        title: &str,
+        content: &str,
+        tags: &Vec<String>,
+        excerpt: &str,
+    ) -> Result<Article, sqlx::Error> {
+        let query = r#"
+            UPDATE articles
+            SET content = $1, tags = $2, excerpt = $3
+            WHERE slug = $4
+            RETURNING *
+        "#;
+
+        let article = sqlx::query_as::<_, Article>(query)
+            .bind(content)
+            .bind(ArticlesRepo::lowercase_tags(tags))
+            .bind(excerpt)
             .bind(title)
             .fetch_one(db)
             .await?;
