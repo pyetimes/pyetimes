@@ -21,20 +21,38 @@
 
       <div class="container">
         <div style="display: flex; gap: 10px">
-          <input type="text" id="title" placeholder="Título del Artículo" />
-          <input type="text" id="slug" placeholder="URL Amigable" />
+          <input
+            type="text"
+            id="title"
+            placeholder="Título del Artículo"
+            value="{{ title }}"
+          />
+          <input
+            type="text"
+            id="slug"
+            placeholder="URL Amigable"
+            value="{{ slug }}"
+          />
         </div>
-        <input type="text" id="excerpt" placeholder="Extracto del Artículo" />
+        <input
+          type="text"
+          id="excerpt"
+          placeholder="Extracto del Artículo"
+          value="{{ excerpt }}"
+        />
         <input
           type="text"
           id="tags"
           placeholder="Etiquetas (separadas por comas)"
+          value="{{ tags }}"
         />
         <div id="editor"></div>
         <div class="form">
           <input type="text" id="email" placeholder="Email" />
           <input type="password" id="password" placeholder="Contraseña" />
-          <button id="save-button" class="save-button">Guardar</button>
+          <button id="save-button" class="save-button">
+            {{ button_text }}
+          </button>
         </div>
       </div>
     </div>
@@ -53,8 +71,7 @@
           height: "700px",
           initialEditType: "markdown", // o 'wysiwyg'
           previewStyle: "tab", // o 'vertical'
-          initialValue:
-            "# Bienvenido al Editor de PyE Times\n\nEscribe tu artículo aquí...",
+          initialValue: "{{ content }}",
         });
 
         function validateEmail(email) {
@@ -77,13 +94,21 @@
           editor.setMarkdown("");
         }
 
-        document.getElementById("save-button").addEventListener("click", () => {
+        const saveButton = document.getElementById("save-button");
+
+        saveButton.addEventListener("click", () => {
+          // disable button to prevent multiple clicks
+          saveButton.disabled = true;
+
           const markdown = editor.getMarkdown();
           let data = {
             title: document.getElementById("title").value,
             slug: document.getElementById("slug").value,
             excerpt: document.getElementById("excerpt").value,
-            tags: document.getElementById("tags").value.split(","),
+            tags: document
+              .getElementById("tags")
+              .value.split(",")
+              .map((tag) => tag.trim().toLowerCase()), // split tags by comma and trim whitespace
             content: markdown,
             author: {
               email: document.getElementById("email").value,
@@ -136,6 +161,10 @@
             })
             .catch((error) => {
               alert("Error al guardar el artículo: " + error.message);
+            })
+            .finally(() => {
+              // re-enable button after request
+              saveButton.disabled = false;
             });
         });
       });

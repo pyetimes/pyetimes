@@ -7,7 +7,7 @@ pub struct ArticlesRepo;
 impl ArticlesRepo {
     // function to lowercase the tags
     pub fn lowercase_tags(tags: &Vec<String>) -> Vec<String> {
-        tags.iter().map(|tag| tag.to_lowercase()).collect()
+        tags.iter().map(|tag| tag.trim().to_lowercase()).collect()
     }
 
     pub async fn create(
@@ -44,8 +44,19 @@ impl ArticlesRepo {
         Ok(article)
     }
 
+    pub async fn get_by_id(db: &PgPool, id: i32) -> Result<Option<Article>, sqlx::Error> {
+        let query = "SELECT * FROM articles WHERE id = $1";
+        let article = sqlx::query_as::<_, Article>(query)
+            .bind(id)
+            .fetch_optional(db)
+            .await?;
+
+        Ok(article)
+    }
+
     pub async fn update(
         db: &PgPool,
+        slug: &str, // assuming slug is used as id for this example
         title: &str,
         content: &str,
         tags: &Vec<String>,
@@ -53,8 +64,8 @@ impl ArticlesRepo {
     ) -> Result<Article, sqlx::Error> {
         let query = r#"
             UPDATE articles
-            SET content = $1, tags = $2, excerpt = $3
-            WHERE slug = $4
+            SET content = $1, tags = $2, excerpt = $3, title = $4
+            WHERE slug = $5
             RETURNING *
         "#;
 
@@ -63,6 +74,7 @@ impl ArticlesRepo {
             .bind(ArticlesRepo::lowercase_tags(tags))
             .bind(excerpt)
             .bind(title)
+            .bind(slug) // assuming slug is the same as title for this example
             .fetch_one(db)
             .await?;
 

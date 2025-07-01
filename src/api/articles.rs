@@ -61,6 +61,7 @@ async fn post(
 
         let article = ArticlesRepo::update(
             &state.db,
+            &info.slug, // assuming slug is used as id for this example
             &info.title,
             &info.content,
             &info.tags,
