@@ -9,8 +9,10 @@ pub struct Article {
     pub title: String,
     pub slug: String,
     pub content: String,
+    pub excerpt: String,
     pub author_id: i32,
     pub published: bool,
+    pub published_at: Option<NaiveDateTime>,
     pub tags: Vec<String>,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
@@ -21,6 +23,7 @@ pub struct ArticleCreate {
     pub title: String,
     pub slug: String,
     pub content: String,
+    pub excerpt: String,
     pub tags: Vec<String>,
     pub author: AuthorCredentials,
 }

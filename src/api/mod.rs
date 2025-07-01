@@ -4,11 +4,11 @@ use crate::state::AppState;
 
 mod articles;
 mod authors;
-mod pye_times;
+mod index;
 
 pub fn routes() -> Router<AppState> {
     Router::new()
         .nest("/api/authors", authors::routes())
-        .nest("/api/articles", articles::routes())
-        .merge(pye_times::routes())
+        .nest("/articles", articles::routes())
+        .merge(index::routes())
 }

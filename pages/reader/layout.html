@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <!-- Primary Meta Tags -->
     <title>PyE Times | News</title>
@@ -47,36 +47,33 @@
     <!-- Styles -->
     <link rel="stylesheet" href="/css/layout.css" />
   </head>
-
   <body>
-    <div class="breaking-banner">
+    <div class="main-wrapper">
+      <!-- <div class="breaking-banner">
       🚨 BREAKING: Nuevo Framework JavaScript Promete "Esta Vez Sí Será
       Diferente"
-    </div>
+    </div> -->
 
-    <header class="header">
-      <h1 class="masthead">PyE TIMES</h1>
-      <p class="tagline">"Todas las Noticias que Merecen Compilar"</p>
-      <div class="date-price">
-        <span id="date">Jueves, 26 de Junio, 2025</span>
-        <span>Precio: 0 Bugs | Edición Discord</span>
+      <header class="header">
+        <h1 class="masthead"><a href="/">PyE TIMES</a></h1>
+        <p class="tagline">"Todas las Noticias que Merecen Compilar"</p>
+        <div class="date-price">
+          <span id="date">Jueves, 26 de Junio, 2025</span>
+          <span>Dias sin Bugs: 0</span>
+        </div>
+      </header>
+
+      <div class="container">
+        <div class="main-grid"></div>
+
+        <div class="section-grid">{{ body }}</div>
       </div>
-    </header>
-
-    <div class="container">
-      <div class="main-grid"></div>
-
-      <div class="section-grid">{{ sections }}</div>
     </div>
 
     <footer class="footer">
       <p>
-        &copy; 2025 PyE Times | Una publicación del servidor de Discord
-        "Programadores y Estudiantes"
-      </p>
-      <p>
-        Todas las noticias son 100% reales* (*en universos paralelos donde los
-        bugs se arreglan solos)
+        &copy; 2025 PyE Times | Todas las noticias son 100% reales* (*en
+        universos paralelos donde los bugs se arreglan solos)
       </p>
     </footer>
 

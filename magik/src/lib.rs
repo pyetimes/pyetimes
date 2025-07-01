@@ -1,11 +1,14 @@
 use std::path;
 
-use crate::template::Template;
+pub use crate::template::Template;
 
 pub use content_builder::ContentBuilder;
 
+pub use renderable::Renderable;
+
 mod content_builder;
 mod parser;
+mod renderable;
 mod template;
 
 pub fn from_string(input: &str) -> Template {
@@ -36,8 +39,8 @@ mod test {
     fn test_from_str() {
         let mut template = from_string("<h1>{{ greet }}, {{ place }}!</h1>");
 
-        template.set("greet", "Hello");
-        template.set("place", "World");
+        template.set("greet", &"Hello");
+        template.set("place", &"World");
 
         println!("Result: {}", template.render());
         assert!(template.render() == "<h1>Hello, World!</h1>");

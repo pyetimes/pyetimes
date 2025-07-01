@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PyE Times | Editor</title>
+    <link rel="stylesheet" href="/css/editor/layout.css" />
+
+    <!-- Toast UI Editor -->
+    <link
+      rel="stylesheet"
+      href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"
+    />
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="header">
+        <h1 class="masthead-subtitle">Editor</h1>
+        <h1 class="masthead"><a href="/">PyE TIMES</a></h1>
+        <div style="width: 33.33%"></div>
+      </header>
+
+      <div class="container">
+        <div style="display: flex; gap: 10px">
+          <input type="text" id="title" placeholder="Título del Artículo" />
+          <input type="text" id="slug" placeholder="URL Amigable" />
+        </div>
+        <input type="text" id="excerpt" placeholder="Extracto del Artículo" />
+        <input
+          type="text"
+          id="tags"
+          placeholder="Etiquetas (separadas por comas)"
+        />
+        <div id="editor"></div>
+        <div class="form">
+          <input type="text" id="email" placeholder="Email" />
+          <input type="password" id="password" placeholder="Contraseña" />
+          <button id="save-button" class="save-button">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>
+        &copy; 2025 PyE Times | Todas las noticias son 100% reales* (*en
+        universos paralelos donde los bugs se arreglan solos)
+      </p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const editor = new toastui.Editor({
+          el: document.getElementById("editor"),
+          height: "700px",
+          initialEditType: "markdown", // o 'wysiwyg'
+          previewStyle: "tab", // o 'vertical'
+          initialValue:
+            "# Bienvenido al Editor de PyE Times\n\nEscribe tu artículo aquí...",
+        });
+
+        function validateEmail(email) {
+          const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          return re.test(String(email).toLowerCase());
+        }
+
+        function validateSlug(slug) {
+          const re = /^[a-zA-Z0-9-_]+$/;
+          return re.test(slug);
+        }
+
+        function cleanAllInputs() {
+          document.getElementById("title").value = "";
+          document.getElementById("slug").value = "";
+          document.getElementById("excerpt").value = "";
+          document.getElementById("tags").value = "";
+          document.getElementById("email").value = "";
+          document.getElementById("password").value = "";
+          editor.setMarkdown("");
+        }
+
+        document.getElementById("save-button").addEventListener("click", () => {
+          const markdown = editor.getMarkdown();
+          let data = {
+            title: document.getElementById("title").value,
+            slug: document.getElementById("slug").value,
+            excerpt: document.getElementById("excerpt").value,
+            tags: document.getElementById("tags").value.split(","),
+            content: markdown,
+            author: {
+              email: document.getElementById("email").value,
+              password: document.getElementById("password").value,
+            },
+          };
+
+          if (
+            !data.title ||
+            !data.slug ||
+            !data.excerpt ||
+            !data.content ||
+            !data.author.email ||
+            !data.author.password
+          ) {
+            alert("Por favor, completa todos los campos.");
+            return;
+          }
+
+          if (!validateEmail(data.author.email)) {
+            alert("Por favor, ingresa un correo electrónico válido.");
+            return;
+          }
+
+          if (!validateSlug(data.slug)) {
+            alert(
+              "El slug solo puede contener letras, números, guiones y guiones bajos."
+            );
+            return;
+          }
+
+          // Send data to the server
+          fetch("/articles", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+            .then(async (response) => {
+              if (!response.ok) {
+                alert(await response.text());
+                return;
+              }
+              alert(
+                "Artículo guardado exitosamente! urL: https://pyetimes.daril.dev/articles/" +
+                  (await response.json()).slug
+              );
+              cleanAllInputs();
+            })
+            .catch((error) => {
+              alert("Error al guardar el artículo: " + error.message);
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

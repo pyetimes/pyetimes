@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, types::chrono::NaiveDateTime};
-use zeroize::Zeroize;
 
 #[derive(Debug, Clone, FromRow, Serialize, Deserialize)]
 pub struct Author {
