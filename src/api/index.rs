@@ -21,6 +21,6 @@ async fn index(State(state): State<AppState>) -> Page {
     pages::index(feed.as_slice())
 }
 
-async fn editor(State(state): State<AppState>) -> Page {
+async fn editor(State(_state): State<AppState>) -> Page {
     pages::editor()
 }

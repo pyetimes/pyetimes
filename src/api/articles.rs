@@ -4,7 +4,6 @@ use axum::{
     http::StatusCode,
     routing,
 };
-use sqlx::Error;
 
 use crate::{
     models::{Article, ArticleCreate, ErrorPayload},

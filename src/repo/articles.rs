@@ -29,13 +29,6 @@ impl ArticlesRepo {
         Ok(article)
     }
 
-    pub async fn get_all(db: &PgPool) -> Result<Vec<Article>, sqlx::Error> {
-        let query = "SELECT * FROM articles ORDER BY created_at DESC";
-        let articles = sqlx::query_as::<_, Article>(query).fetch_all(db).await?;
-
-        Ok(articles)
-    }
-
     pub async fn get_by_slug(db: &PgPool, title: &str) -> Result<Article, sqlx::Error> {
         let query = "SELECT * FROM articles WHERE slug = $1";
         let article = sqlx::query_as::<_, Article>(query)
