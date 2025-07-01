@@ -1,7 +1,7 @@
 FROM rust:slim-bullseye AS builder
 
 WORKDIR /app
-COPY ./Cargo.toml ../Cargo.lock ./
+COPY ./Cargo.toml ./Cargo.lock ./
 COPY ./magik ./magik
 COPY ./pages ./pages
 COPY ./build.rs ./build.rs
