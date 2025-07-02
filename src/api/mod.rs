@@ -1,4 +1,4 @@
-use axum::{Router, extract::State};
+use axum::Router;
 
 use crate::state::AppState;
 
