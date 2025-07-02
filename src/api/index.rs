@@ -1,5 +1,6 @@
 use axum::extract::Query;
 use axum::{Router, extract::State, routing::get};
+use tower::util::Optional;
 use tower_http::services::{ServeDir, ServeFile};
 
 use crate::pages::{self, Page};
@@ -25,11 +26,15 @@ async fn index(State(state): State<AppState>) -> Page {
 
 #[derive(serde::Deserialize)]
 pub struct GetParams {
-    pub article: i32,
+    pub article: Option<i32>,
 }
 
 async fn editor(State(state): State<AppState>, id: Query<GetParams>) -> Page {
-    let article = ArticlesRepo::get_by_id(&state.db, id.article).await;
+    if id.article.is_none() {
+        return pages::editor(None);
+    }
+
+    let article = ArticlesRepo::get_by_id(&state.db, id.article.unwrap()).await;
 
     if article.is_err() {
         return pages::editor(None);
