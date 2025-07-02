@@ -1,6 +1,5 @@
 use axum::extract::Query;
 use axum::{Router, extract::State, routing::get};
-use tower::util::Optional;
 use tower_http::services::{ServeDir, ServeFile};
 
 use crate::pages::{self, Page};

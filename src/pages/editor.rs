@@ -30,11 +30,12 @@ pub fn editor(article: Option<Article>) -> Page {
     } else {
         layout.set(
             "content",
-            &"# Bienvenido al Editor de PyE Times\n\nEscribe tu artículo aquí...",
+            &"# Bienvenido al Editor de PyE Times\\n\\nEscribe tu artículo aquí...",
         );
         layout.set("title", &());
         layout.set("slug", &());
         layout.set("excerpt", &());
+        layout.set("tags", &());
         layout.set("button_text", &"Guardar");
     }
 
