@@ -4,4 +4,4 @@ mod sections;
 
 pub use articles::ArticlesRepo;
 pub use authors::AuthorsRepo;
-pub use sections::SectionsRepo;
+pub use sections::FeedRepo;

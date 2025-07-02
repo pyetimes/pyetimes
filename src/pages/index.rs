@@ -1,9 +1,35 @@
-use crate::{models::Section, pages::Page};
+use crate::{
+    models::{Article, Author, Section},
+    pages::Page,
+};
 
-pub fn index(data: &[Section]) -> Page {
+pub fn index(main_story: Option<(Article, Author)>, data: &[Section]) -> Page {
     let mut layout = magik::get("./pages/reader/layout.html");
     let section = magik::get("./pages/reader/section.html");
     let article = magik::get("./pages/reader/article_preview.html");
+
+    let mut main_story_template = magik::get("./pages/reader/main_story.html");
+
+    if let Some(main_story_data) = main_story {
+        let article = main_story_data.0;
+        let author = main_story_data.1;
+
+        main_story_template.set("headline", &article.title);
+        main_story_template.set("author_name", &author.name);
+        main_story_template.set(
+            "date",
+            &article
+                .published_at
+                .map_or(format!("Not published yet ({})", article.id), |date| {
+                    date.format(&"%d de %B, %Y").to_string()
+                }),
+        );
+        main_story_template.set("slug", &article.slug);
+        main_story_template.set("lead_text", &article.excerpt);
+        layout.set("main_story", &main_story_template);
+    } else {
+        layout.set("main_story", &());
+    }
 
     let mut sections = vec![];
 

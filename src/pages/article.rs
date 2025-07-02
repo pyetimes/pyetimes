@@ -9,6 +9,8 @@ pub fn article(author: &Author, article: &Article) -> Page {
     let mut layout = magik::get("./pages/reader/layout.html");
     let mut article_template = magik::get("./pages/reader/article.html");
 
+    layout.set("main_story", &());
+
     if article.published {
         article_template.set("edit_link", &());
     } else {

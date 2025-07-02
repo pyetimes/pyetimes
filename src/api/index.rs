@@ -3,7 +3,7 @@ use axum::{Router, extract::State, routing::get};
 use tower_http::services::{ServeDir, ServeFile};
 
 use crate::pages::{self, Page};
-use crate::repo::{ArticlesRepo, SectionsRepo};
+use crate::repo::{ArticlesRepo, FeedRepo};
 use crate::state::AppState;
 
 pub fn routes() -> Router<AppState> {
@@ -16,11 +16,15 @@ pub fn routes() -> Router<AppState> {
 }
 
 async fn index(State(state): State<AppState>) -> Page {
-    let feed = SectionsRepo::get_feed(&state.db)
-        .await
-        .unwrap_or_else(|_| vec![]);
+    let feed = FeedRepo::get(&state.db).await;
 
-    pages::index(feed.as_slice())
+    if feed.is_err() {
+        return pages::index(None, &[]);
+    }
+
+    let (main_story, sections) = feed.unwrap();
+
+    pages::index(main_story, sections.as_slice())
 }
 
 #[derive(serde::Deserialize)]
