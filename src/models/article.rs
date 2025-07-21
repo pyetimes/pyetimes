@@ -11,6 +11,7 @@ pub struct Article {
     pub content: String,
     pub excerpt: String,
     pub author_id: i32,
+    pub section_id: i32,
     pub published: bool,
     pub published_at: Option<NaiveDateTime>,
     pub tags: Vec<String>,

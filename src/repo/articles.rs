@@ -6,7 +6,7 @@ pub struct ArticlesRepo;
 
 impl ArticlesRepo {
     // function to lowercase the tags
-    pub fn lowercase_tags(tags: &Vec<String>) -> Vec<String> {
+    pub fn lowercase_tags(tags: &[String]) -> Vec<String> {
         tags.iter().map(|tag| tag.trim().to_lowercase()).collect()
     }
 
@@ -26,7 +26,7 @@ impl ArticlesRepo {
             .bind(&article.slug)
             .bind(&article.content)
             .bind(author_id)
-            .bind(&ArticlesRepo::lowercase_tags(&article.tags))
+            .bind(ArticlesRepo::lowercase_tags(&article.tags))
             .bind(&article.excerpt)
             .fetch_one(db)
             .await?;
