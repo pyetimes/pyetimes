@@ -4,11 +4,11 @@ use crate::{
 };
 
 pub fn index(main_story: Option<(Article, Author)>, data: &[Section]) -> Page {
-    let mut layout = magik::get("./pages/reader/layout.html");
-    let section = magik::get("./pages/reader/section.html");
-    let article = magik::get("./pages/reader/article_preview.html");
+    let mut layout = magik_old::get("./pages/reader/layout.html");
+    let section = magik_old::get("./pages/reader/section.html");
+    let article = magik_old::get("./pages/reader/article_preview.html");
 
-    let mut main_story_template = magik::get("./pages/reader/main_story.html");
+    let mut main_story_template = magik_old::get("./pages/reader/main_story.html");
 
     if let Some(main_story_data) = main_story {
         let article = main_story_data.0;

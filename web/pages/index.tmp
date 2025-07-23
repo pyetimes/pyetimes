@@ -1,0 +1,62 @@
+{{
+    use crate::web::components::{ 
+        Article, 
+        MainArticle,
+        Meta,
+        Header,
+        Footer,
+        Section,
+        ArticlePreview
+    };
+}}
+<!DOCTYPE html>
+<html>
+    <head>
+        {{ Meta {} }}
+        <script src="/js/web_components.js"></script>
+    </head>
+    <body>
+        <div class="main-wrapper">
+            {{ Header {} }}
+
+            <div class="container">
+                <div class="main-grid">{{
+                    if let Some((article, author)) = &props.main_story {
+                        MainArticle {
+                            id: article.id,
+                            headline: article.title.as_str(),
+                            slug: article.slug.as_str(),
+                            author_name: author.name.as_str(),
+                            date: article.published_at,
+                            lead_text: article.excerpt.as_str(),
+                        }.render()
+                    }
+                    else {
+                        "".render()
+                    }
+                }}</div>
+                <div class="section-grid">{{
+                    props.sections.iter().map(|section| Section {
+                        title: section.title.as_str(),
+                        articles: section.articles.iter().map(|article| ArticlePreview {}).collect(),
+                    }).collect::<Vec<Section>>()
+                }}</div>
+            </div>
+        </div>
+
+        {{ Footer {} }}
+
+        <script>
+            // Set current date in the header
+            const dateElement = document.getElementById("date");
+            const options = {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            };
+            const currentDate = new Date().toLocaleDateString("es-ES", options);
+            dateElement.textContent = currentDate;
+        </script>
+    </body>
+</html>

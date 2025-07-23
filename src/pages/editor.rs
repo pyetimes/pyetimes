@@ -8,7 +8,7 @@ fn escape_string(s: &str) -> String {
 }
 
 pub fn editor(article: Option<Article>) -> Page {
-    let mut layout = magik::get("./pages/editor/layout.html");
+    let mut layout = magik_old::get("./pages/editor/layout.html");
 
     if article.is_some() {
         let article = article.unwrap();

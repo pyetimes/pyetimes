@@ -1,6 +1,7 @@
 use axum::extract::Query;
+use axum::response::Html;
 use axum::{Router, extract::State, routing::get};
-use tower_http::services::{ServeDir, ServeFile};
+use magik::Renderable;
 
 use crate::pages::{self, Page};
 use crate::repo::{ArticlesRepo, FeedRepo};
@@ -10,21 +11,30 @@ pub fn routes() -> Router<AppState> {
     Router::new()
         .route("/", get(index))
         .route("/editor", get(editor))
-        .nest_service("/css", ServeDir::new("static/css"))
-        .nest_service("/images", ServeDir::new("static/images"))
-        .nest_service("/favicon.png", ServeFile::new("static/favicon.png"))
 }
 
-async fn index(State(state): State<AppState>) -> Page {
+async fn index(State(state): State<AppState>) -> Html<String> {
     let feed = FeedRepo::get(&state.db).await;
 
     if feed.is_err() {
-        return pages::index(None, &[]);
+        return Html(
+            pages::Index {
+                main_story: None,
+                sections: Vec::new(),
+            }
+            .render(),
+        );
     }
 
     let (main_story, sections) = feed.unwrap();
 
-    pages::index(main_story, sections.as_slice())
+    Html(
+        pages::Index {
+            main_story,
+            sections,
+        }
+        .render(),
+    )
 }
 
 #[derive(serde::Deserialize)]

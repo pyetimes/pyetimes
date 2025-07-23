@@ -6,8 +6,8 @@ use crate::{
 };
 
 pub fn article(author: &Author, article: &Article) -> Page {
-    let mut layout = magik::get("./pages/reader/layout.html");
-    let mut article_template = magik::get("./pages/reader/article.html");
+    let mut layout = magik_old::get("./pages/reader/layout.html");
+    let mut article_template = magik_old::get("./pages/reader/article.html");
 
     layout.set("main_story", &());
 

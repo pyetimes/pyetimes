@@ -7,6 +7,7 @@ mod models;
 mod pages;
 mod repo;
 mod state;
+mod web;
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() {
