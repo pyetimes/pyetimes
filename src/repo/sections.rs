@@ -68,7 +68,7 @@ impl FeedRepo {
                         ORDER BY a2.published_at ASC 
                         LIMIT 4
                     )
-                ORDER BY a.published_at ASC
+                ORDER BY a.published_at DESC
             "#,
         )
         .fetch_all(db)
