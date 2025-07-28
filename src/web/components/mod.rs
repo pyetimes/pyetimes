@@ -1,13 +1,7 @@
 use chrono::NaiveDateTime;
 use magik_macro::template;
 
-#[template(path = "./web/components/article.tmp")]
-pub struct Article<'a> {
-    pub title: &'a str,
-    pub content: &'a str,
-}
-
-#[template(path = "./web/components/main_article.tmp")]
+#[template(path = "./web/components/main_article.mk")]
 pub struct MainArticle<'a> {
     pub id: i32,
     pub headline: &'a str,
@@ -17,22 +11,22 @@ pub struct MainArticle<'a> {
     pub lead_text: &'a str,
 }
 
-#[template(path = "./web/components/meta.tmp")]
+#[template(path = "./web/components/meta.mk")]
 pub struct Meta {}
 
-#[template(path = "./web/components/header.tmp")]
+#[template(path = "./web/components/header.mk")]
 pub struct Header {}
 
-#[template(path = "./web/components/footer.tmp")]
+#[template(path = "./web/components/footer.mk")]
 pub struct Footer {}
 
-#[template(path = "./web/components/section.tmp")]
+#[template(path = "./web/components/section.mk")]
 pub struct Section<'a, 'b> {
     pub title: &'a str,
     pub articles: Vec<ArticlePreview<'b>>,
 }
 
-#[template(path = "./web/components/article_preview.tmp")]
+#[template(path = "./web/components/article_preview.mk")]
 pub struct ArticlePreview<'a> {
     pub title: &'a str,
     pub slug: &'a str,

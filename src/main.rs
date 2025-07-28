@@ -2,7 +2,6 @@ use tower_http::trace::TraceLayer;
 
 mod api;
 mod db;
-mod error;
 mod models;
 mod pages;
 mod repo;
@@ -31,8 +30,7 @@ async fn main() {
 
     let app = api::routes()
         .with_state(app_sate)
-        .layer(TraceLayer::new_for_http())
-        .fallback(error::fallback_handler);
+        .layer(TraceLayer::new_for_http());
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
 

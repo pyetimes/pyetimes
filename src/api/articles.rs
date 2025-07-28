@@ -2,12 +2,14 @@ use axum::{
     Json, Router,
     extract::{Path, State},
     http::StatusCode,
+    response::Html,
     routing,
 };
+use magik::Renderable;
 
 use crate::{
     models::{Article, ArticleCreate, ErrorPayload},
-    pages::{self, Page},
+    pages::{self},
     repo::{ArticlesRepo, AuthorsRepo},
     state::AppState,
 };
@@ -15,7 +17,7 @@ use crate::{
 pub fn routes() -> Router<AppState> {
     Router::new()
         .route("/", routing::post(post))
-        .route("/{title}", routing::get(get_by_title))
+        .route("/{slug}", routing::get(get_by_slug))
 }
 
 async fn post(
@@ -49,7 +51,19 @@ async fn post(
 
     let article = ArticlesRepo::get_by_slug(&state.db, &info.slug).await;
 
-    if article.is_ok() {
+    if article.is_err() {
+        return Err(ErrorPayload::new(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!(
+                "Error checking for existing article: {}",
+                article.unwrap_err()
+            ),
+        ));
+    }
+
+    let article = article.unwrap();
+
+    if article.is_some() {
         let article = article.unwrap();
 
         if article.author_id != author.id {
@@ -99,14 +113,23 @@ async fn post(
     Ok(Json(article.unwrap()))
 }
 
-async fn get_by_title(
+async fn get_by_slug(
     State(state): State<AppState>,
-    Path(title): Path<String>,
-) -> Result<Page, ErrorPayload> {
-    let article = ArticlesRepo::get_by_slug(&state.db, &title).await;
+    Path(slug): Path<String>,
+) -> Result<Html<String>, ErrorPayload> {
+    let article = ArticlesRepo::get_by_slug(&state.db, &slug).await;
 
     if article.is_err() {
-        return Ok(pages::not_found());
+        return Err(ErrorPayload::new(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Error fetching article: {}", article.unwrap_err()),
+        ));
+    }
+
+    let article = article.unwrap();
+
+    if article.is_none() {
+        return Ok(Html(pages::NotFound {}.render()));
     }
 
     let article = article.unwrap();
@@ -131,5 +154,11 @@ async fn get_by_title(
 
     let author = author.unwrap();
 
-    Ok(pages::article(&author, &article))
+    Ok(Html(
+        pages::Article {
+            article: &article,
+            author: &author,
+        }
+        .render(),
+    ))
 }

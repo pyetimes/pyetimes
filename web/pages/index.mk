@@ -1,6 +1,5 @@
 {{
     use crate::web::components::{ 
-        Article, 
         MainArticle,
         Meta,
         Header,

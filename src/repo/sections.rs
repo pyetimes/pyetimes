@@ -102,12 +102,14 @@ impl FeedRepo {
                 };
                 
                 sections.insert(section.id, section);
-
-                if let Some(articles) = articles.get_mut(&article.section_id) {
-                    articles.push(article);
-                }
-                else {
-                    articles.insert(article.section_id, vec![article]);
+                
+                if let Some(article_section_id) = article.section_id {
+                    if let Some(articles) = articles.get_mut(&article_section_id) {
+                        articles.push(article);
+                    }
+                    else {
+                        articles.insert(article_section_id, vec![article]);
+                    }
                 }
 
                 Ok::<_, sqlx::Error>(())

@@ -34,11 +34,11 @@ impl ArticlesRepo {
         Ok(article)
     }
 
-    pub async fn get_by_slug(db: &PgPool, title: &str) -> Result<Article, sqlx::Error> {
+    pub async fn get_by_slug(db: &PgPool, slug: &str) -> Result<Option<Article>, sqlx::Error> {
         let query = "SELECT * FROM articles WHERE slug = $1";
         let article = sqlx::query_as::<_, Article>(query)
-            .bind(title)
-            .fetch_one(db)
+            .bind(slug)
+            .fetch_optional(db)
             .await?;
 
         Ok(article)
