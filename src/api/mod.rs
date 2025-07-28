@@ -18,10 +18,10 @@ pub fn routes() -> Router<AppState> {
         .nest("/articles", articles::routes())
         .route("/health", axum::routing::get(health_check))
         .merge(index::routes())
-        .nest_service("/css", ServeDir::new("static/css"))
-        .nest_service("/js", ServeDir::new("static/js"))
-        .nest_service("/images", ServeDir::new("static/images"))
-        .nest_service("/favicon.png", ServeFile::new("static/favicon.png"))
+        .nest_service("/css", ServeDir::new("web/static/css"))
+        .nest_service("/js", ServeDir::new("web/static/js"))
+        .nest_service("/images", ServeDir::new("web/static/images"))
+        .nest_service("/favicon.png", ServeFile::new("web/static/favicon.png"))
         .fallback(fallback_handler)
 }
 

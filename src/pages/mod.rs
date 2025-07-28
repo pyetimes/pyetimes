@@ -1,25 +1,24 @@
-use axum::response::IntoResponse;
-use magik_old::Template;
+use magik_macro::template;
 
-mod editor;
-mod new_mod;
+use crate::models;
 
-pub use editor::editor;
-pub use new_mod::*;
-
-pub struct Page {
-    tmp: Template,
+#[template(path = "./web/pages/index.mk")]
+pub struct Index {
+    pub main_story: Option<(models::Article, models::Author)>,
+    pub sections: Vec<models::Section>,
 }
 
-impl IntoResponse for Page {
-    fn into_response(self) -> axum::response::Response {
-        let rendered = self.tmp.render();
-        axum::response::Html(rendered).into_response()
-    }
+#[template(path = "./web/pages/404.mk")]
+pub struct NotFound {}
+
+#[template(path = "./web/pages/article.mk")]
+pub struct Article<'a> {
+    pub article: &'a models::Article,
+    pub author: &'a models::Author,
 }
 
-impl Into<Page> for Template {
-    fn into(self) -> Page {
-        Page { tmp: self }
-    }
+#[template(path = "./web/pages/editor.mk")]
+pub struct Editor<'a> {
+    pub article: Option<&'a models::Article>,
+    // pub sections: &'a [models::Section],
 }
