@@ -43,27 +43,12 @@ impl AuthorsRepo {
         Ok(author)
     }
 
-    /// This method validates the author's credentials.
-    /// It returns the author if the credentials are valid, or None if they are not.
-    pub async fn validate_credentials(
-        db: &PgPool,
-        email: &str,
-        password: &str,
-    ) -> Result<Option<Author>, sqlx::Error> {
+    pub async fn get_by_email(db: &PgPool, email: &str) -> Result<Option<Author>, sqlx::Error> {
         let query = "SELECT id, name, email, bio, password_hash, profile_image, created_at FROM authors WHERE email = $1";
-        let mut author = sqlx::query_as::<_, Author>(query)
+
+        sqlx::query_as::<_, Author>(query)
             .bind(email)
             .fetch_optional(db)
-            .await?;
-
-        if let Some(ref mut a) = author {
-            if bcrypt::verify(password, &a.password_hash).unwrap_or(false) {
-                return Ok(Some(a.clone()));
-            } else {
-                return Ok(None);
-            }
-        }
-
-        Ok(None)
+            .await
     }
 }

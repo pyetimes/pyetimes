@@ -24,9 +24,7 @@ async fn post(
     State(state): State<AppState>,
     Json(info): Json<ArticleCreate>,
 ) -> Result<Json<Article>, ErrorPayload> {
-    let author =
-        AuthorsRepo::validate_credentials(&state.db, &info.author.email, &info.author.password)
-            .await;
+    let author = AuthorsRepo::get_by_email(&state.db, &info.author.email).await;
 
     if author.is_err() {
         return Err(ErrorPayload::new(
@@ -40,7 +38,14 @@ async fn post(
 
     let author = author.unwrap();
 
-    if author.is_none() {
+    if let Some(ref a) = author {
+        if !bcrypt::verify(&info.author.password, &a.password_hash).unwrap_or(false) {
+            return Err(ErrorPayload::new(
+                StatusCode::UNAUTHORIZED,
+                "Invalid author credentials".to_string(),
+            ));
+        }
+    } else {
         return Err(ErrorPayload::new(
             StatusCode::UNAUTHORIZED,
             "Invalid author credentials".to_string(),
@@ -63,9 +68,7 @@ async fn post(
 
     let article = article.unwrap();
 
-    if article.is_some() {
-        let article = article.unwrap();
-
+    if let Some(article) = article {
         if article.author_id != author.id {
             return Err(ErrorPayload::new(
                 StatusCode::FORBIDDEN,

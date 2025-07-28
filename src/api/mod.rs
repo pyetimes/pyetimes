@@ -10,12 +10,14 @@ use crate::{pages::NotFound, state::AppState};
 
 mod articles;
 mod authors;
+mod editor;
 mod index;
 
 pub fn routes() -> Router<AppState> {
     Router::new()
         .nest("/api/authors", authors::routes())
         .nest("/articles", articles::routes())
+        .nest("/editor", editor::routes())
         .route("/health", axum::routing::get(health_check))
         .merge(index::routes())
         .nest_service("/css", ServeDir::new("web/static/css"))

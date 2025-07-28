@@ -31,7 +31,11 @@
                     <a href="/" class="back-link">← Volver al PyE Times</a>
                     {{
                         if props.article.published {
-                            "".to_string()
+                            format!("<span class=\"tags\">{}<span>", props.article.tags
+                                .iter()
+                                .map(|tag| format!("<a class=\"tag-link\">{}</a>", tag))
+                                .collect::<Vec<_>>()
+                                .concat())
                         } else {
                             format!("<a href=\"/editor?article={}\" class=\"edit-link\">Editar</a>", props.article.id)
                         }
