@@ -45,7 +45,7 @@ body {
 }
 
 body {
-  font-family: "Georgia", "Times New Roman", serif;
+  font-family: "Playfair Display", serif, Helvetica, Roboto, Arial, sans-serif;
   line-height: 1.6;
   color: var(--color-text-primary);
   background: var(--color-bg-primary);
