@@ -9,10 +9,18 @@
 <!DOCTYPE html>
 <html>
     <head>
-        {{ Meta {} }}
+        {{ 
+            Meta {
+                title: &props.article.title,
+                description: &props.article.excerpt,
+                ..Default::default()
+            }
+        }}
         
         <!-- Styles -->
         <link rel="stylesheet" href="/css/layout.css" />
+        <link rel="stylesheet" href="/css/article.css" />
+        <link rel="stylesheet" href="/css/markdown.css" />
         
         <!-- Scripts -->
         <script src="/js/web_components.js"></script>
@@ -22,11 +30,7 @@
             {{ Header {} }}
 
             <div class="container">
-                <link rel="stylesheet" href="/css/article.css" />
-                <link rel="stylesheet" href="/css/markdown.css" />
-                
                 <br/>
-
                 <div class="article-header-links">
                     <a href="/" class="back-link">← Volver al PyE Times</a>
                     {{

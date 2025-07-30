@@ -1,23 +1,13 @@
-use axum::{
-    Json, Router,
-    extract::{Path, State},
-    http::StatusCode,
-    response::Html,
-    routing,
-};
-use magik::Renderable;
+use axum::{Json, Router, extract::State, http::StatusCode, routing};
 
 use crate::{
     models::{Article, ArticleCreate, ErrorPayload},
-    pages::{self},
     repo::{ArticlesRepo, AuthorsRepo},
     state::AppState,
 };
 
 pub fn routes() -> Router<AppState> {
-    Router::new()
-        .route("/", routing::post(post))
-        .route("/{slug}", routing::get(get_by_slug))
+    Router::new().route("/", routing::post(post))
 }
 
 async fn post(
@@ -98,70 +88,18 @@ async fn post(
 
     let article = ArticlesRepo::create(&state.db, author.id, &info).await;
 
-    if let Err(ref err) = article {
-        if let sqlx::Error::Database(db_err) = &err {
-            return match db_err.code() {
-                Some(code) if code == "23505" => Err(ErrorPayload::new(
-                    StatusCode::CONFLICT,
-                    format!("Article with slug '{}' already exists", info.slug),
-                )),
-                _ => Err(ErrorPayload::new(
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    format!("Database error: {}", db_err),
-                )),
-            };
-        }
+    if let Err(sqlx::Error::Database(db_err)) = article {
+        return match db_err.code() {
+            Some(code) if code == "23505" => Err(ErrorPayload::new(
+                StatusCode::CONFLICT,
+                format!("Article with slug '{}' already exists", info.slug),
+            )),
+            _ => Err(ErrorPayload::new(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Database error: {}", db_err),
+            )),
+        };
     }
 
     Ok(Json(article.unwrap()))
-}
-
-async fn get_by_slug(
-    State(state): State<AppState>,
-    Path(slug): Path<String>,
-) -> Result<Html<String>, ErrorPayload> {
-    let article = ArticlesRepo::get_by_slug(&state.db, &slug).await;
-
-    if article.is_err() {
-        return Err(ErrorPayload::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Error fetching article: {}", article.unwrap_err()),
-        ));
-    }
-
-    let article = article.unwrap();
-
-    if article.is_none() {
-        return Ok(Html(pages::NotFound {}.render()));
-    }
-
-    let article = article.unwrap();
-
-    let author = AuthorsRepo::get_by_id(&state.db, article.author_id).await;
-
-    if author.is_err() {
-        return Err(ErrorPayload::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Error fetching author: {}", author.unwrap_err()),
-        ));
-    }
-
-    let author = author.unwrap();
-
-    if author.is_none() {
-        return Err(ErrorPayload::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            "Author not found".to_string(),
-        ));
-    }
-
-    let author = author.unwrap();
-
-    Ok(Html(
-        pages::Article {
-            article: &article,
-            author: &author,
-        }
-        .render(),
-    ))
 }

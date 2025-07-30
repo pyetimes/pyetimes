@@ -8,7 +8,13 @@
 <!DOCTYPE html>
 <html>
     <head>
-        {{ Meta {} }}
+        {{ 
+            Meta {
+                title: "Página No Encontrada - PyE Times",
+                description: "Lo sentimos, la página que buscas no existe.",
+                ..Default::default()
+            }
+        }}
         
         <!-- Styles -->
         <link rel="stylesheet" href="/css/layout.css" />

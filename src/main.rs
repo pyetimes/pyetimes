@@ -5,6 +5,7 @@ mod db;
 mod models;
 mod pages;
 mod repo;
+mod responses;
 mod state;
 mod web;
 
@@ -29,6 +30,7 @@ async fn main() {
     };
 
     let app = api::routes()
+        .merge(pages::routes())
         .with_state(app_sate)
         .layer(TraceLayer::new_for_http());
 

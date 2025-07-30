@@ -4,13 +4,9 @@ version = "0.1.0"
 edition = "2024"
 build = "build.rs"
 
-[workspace]
-members = ["magik_old"]
-
 [dependencies]
 axum = "0.8.4"
 tokio = "1.45.1"
-magik_old = { path = "magik_old" }
 magik = { git = "https://github.com/darilrt/magik", package = "magik" }
 magik-macro = { git = "https://github.com/darilrt/magik", package = "magik-macro" }
 tower = "0.5.2"

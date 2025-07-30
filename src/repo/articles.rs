@@ -59,7 +59,7 @@ impl ArticlesRepo {
         slug: &str, // assuming slug is used as id for this example
         title: &str,
         content: &str,
-        tags: &Vec<String>,
+        tags: &[String],
         excerpt: &str,
     ) -> Result<Article, sqlx::Error> {
         let query = r#"

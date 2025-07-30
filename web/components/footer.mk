@@ -1,6 +1,5 @@
 <footer class="footer">
     <p>
-        &copy; 2025 PyE Times | Todas las noticias son 100% reales* (*en
-        universos paralelos donde los bugs se arreglan solos)
+        &copy; 2025 PyE Times | Todas las noticias y artículos son propiedad de sus respectivos autores.
     </p>
 </footer>

@@ -6,20 +6,16 @@ use axum::{
 use magik::Renderable;
 use tower_http::services::{ServeDir, ServeFile};
 
-use crate::{pages::NotFound, state::AppState};
+use crate::{state::AppState, web::pages::NotFound};
 
 mod articles;
 mod authors;
-mod editor;
-mod index;
 
 pub fn routes() -> Router<AppState> {
     Router::new()
         .nest("/api/authors", authors::routes())
-        .nest("/articles", articles::routes())
-        .nest("/editor", editor::routes())
+        .nest("/api/articles", articles::routes())
         .route("/health", axum::routing::get(health_check))
-        .merge(index::routes())
         .nest_service("/css", ServeDir::new("web/static/css"))
         .nest_service("/js", ServeDir::new("web/static/js"))
         .nest_service("/images", ServeDir::new("web/static/images"))

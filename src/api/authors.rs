@@ -13,18 +13,18 @@ use crate::{
 
 pub fn routes() -> Router<AppState> {
     Router::new()
-        .route("/", get(authors_list))
-        .route("/", post(author_create))
-        .route("/{id}", get(author_get))
+        .route("/", get(get_authors))
+        .route("/", post(post_author))
+        .route("/{id}", get(get_author_by_id))
 }
 
-async fn authors_list(State(state): State<AppState>) -> Json<Vec<Author>> {
+async fn get_authors(State(state): State<AppState>) -> Json<Vec<Author>> {
     let list = AuthorsRepo::get_all(&state.db).await.unwrap_or_default();
 
     Json(list)
 }
 
-async fn author_create(
+async fn post_author(
     State(state): State<AppState>,
     Json(author): Json<AuthorCreate>,
 ) -> Result<Json<Author>, ErrorPayload> {
@@ -37,7 +37,7 @@ async fn author_create(
     }
 }
 
-async fn author_get(
+async fn get_author_by_id(
     State(state): State<AppState>,
     Path(id): axum::extract::Path<i32>,
 ) -> Result<Json<Author>, ErrorPayload> {

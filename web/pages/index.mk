@@ -11,7 +11,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        {{ Meta {} }}
+        {{ Meta::default() }}
         
         <!-- Styles -->
         <link rel="stylesheet" href="/css/layout.css" />

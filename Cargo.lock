@@ -931,10 +931,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "magik_old"
-version = "0.1.0"
-
-[[package]]
 name = "matchit"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1209,7 +1205,6 @@ dependencies = [
  "dotenv",
  "magik",
  "magik-macro",
- "magik_old",
  "pulldown-cmark",
  "serde",
  "serde_json",

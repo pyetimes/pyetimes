@@ -1,5 +1,9 @@
+mod meta;
+
 use chrono::NaiveDateTime;
 use magik_macro::template;
+
+pub use meta::*;
 
 #[template(path = "./web/components/main_article.mk")]
 pub struct MainArticle<'a> {
@@ -10,9 +14,6 @@ pub struct MainArticle<'a> {
     pub date: Option<NaiveDateTime>,
     pub lead_text: &'a str,
 }
-
-#[template(path = "./web/components/meta.mk")]
-pub struct Meta {}
 
 #[template(path = "./web/components/header.mk")]
 pub struct Header {}
@@ -32,3 +33,6 @@ pub struct ArticlePreview<'a> {
     pub slug: &'a str,
     pub excerpt: &'a str,
 }
+
+#[template(path = "./web/components/editor_header.mk")]
+pub struct EditorHeader {}

@@ -135,6 +135,11 @@ body {
   border-radius: 5px;
 }
 
+.save-button:disabled {
+  background-color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+
 .form {
   max-width: 100%;
   display: flex;
@@ -155,4 +160,13 @@ input {
   border: 1px solid var(--color-border-secondary);
   border-radius: 5px;
   font-size: 16px;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 5px;
+  font-size: 16px;
+  resize: vertical;
 }

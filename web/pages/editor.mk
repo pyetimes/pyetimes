@@ -5,6 +5,7 @@
         Meta,
         Header,
         Footer,
+        EditorHeader,
     };
 
     fn escape_string(s: &str) -> String {
@@ -15,7 +16,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        {{ Meta {} }}
+        {{ 
+            Meta {
+                title: if props.article.is_some() {
+                    "Editar Artículo - PyE Times"
+                } else {
+                    "Crear Artículo - PyE Times"
+                },
+                description: "Crea o edita un artículo para PyE Times.",
+                ..Default::default()
+            }
+        }}
         
         <!-- Styles -->
         <link rel="stylesheet" href="/css/layout.css" />
@@ -33,7 +44,7 @@
     </head>
     <body>
         <div class="main-wrapper">
-            {{ Header {} }}
+            {{ EditorHeader {} }}
 
             <div class="container">
                 <div style="display: flex; gap: 10px">
@@ -62,13 +73,15 @@
                     placeholder="Etiquetas (separadas por comas)"
                     value="{{ props.article.map_or("".to_string(), |a| a.tags.join(", ")) }}"
                 />
+                
                 <div id="editor"></div>
+
                 <div class="form">
-                <input type="text" id="email" placeholder="Email" />
-                <input type="password" id="password" placeholder="Contraseña" />
-                <button id="save-button" class="save-button">{{
-                    props.article.map_or("Crear Artículo".to_string(), |_| "Actualizar Artículo".to_string())
-                }}</button>
+                    <input type="text" id="email" placeholder="Email" />
+                    <input type="password" id="password" placeholder="Contraseña" />
+                    <button id="save-button" class="save-button">{{
+                        props.article.map_or("Crear Artículo".to_string(), |_| "Actualizar Artículo".to_string())
+                    }}</button>
                 </div>
             </div>
         </div>
@@ -139,6 +152,7 @@
                         !data.author.password
                     ) {
                         alert("Por favor, completa todos los campos.");
+                        saveButton.disabled = false;
                         return;
                     }
 
@@ -146,11 +160,13 @@
                         alert(
                             "El slug solo puede contener letras, números, guiones y guiones bajos."
                         );
+                        saveButton.disabled = false;
                         return;
                     }
                     
                     if (!validateEmail(data.author.email)) {
                         alert("Por favor, ingresa un correo electrónico válido.");
+                        saveButton.disabled = false;
                         return;
                     }
 
