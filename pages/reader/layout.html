@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Primary Meta Tags -->
+    <title>PyE Times | News</title>
+    <meta name="title" content="PyE Times | News" />
+    <meta
+      name="description"
+      content="Últimas noticias y actualizaciones de Discord PyE."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pyetimes.daril.dev/" />
+    <meta property="og:title" content="PyE Times | News" />
+    <meta
+      property="og:description"
+      content="Últimas noticias y actualizaciones de Discord PyE."
+    />
+    <meta property="og:image" content="/images/metatag_preview.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://pyetimes.daril.dev/" />
+    <meta property="twitter:title" content="PyE Times | News" />
+    <meta
+      property="twitter:description"
+      content="Últimas noticias y actualizaciones de Discord PyE."
+    />
+    <meta property="twitter:image" content="/images/metatag_preview.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/editor/layout.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+
+  <body>
+    <div class="main-wrapper">
+      <!-- <div class="breaking-banner">
+      🚨 BREAKING: Nuevo Framework JavaScript Promete "Esta Vez Sí Será
+      Diferente"
+    </div> -->
+
+      <header class="header">
+        <h1 class="masthead"><a href="/">PyE TIMES</a></h1>
+        <p class="tagline">"Todas las Noticias que Merecen Compilar"</p>
+        <div class="date-price">
+          <span id="date">Jueves, 26 de Junio, 2025</span>
+          <span>Dias sin Bugs: 0</span>
+        </div>
+      </header>
+
+      <div class="container">
+        <div class="main-grid">{{ main_story }}</div>
+        <div class="section-grid">{{ body }}</div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>
+        &copy; 2025 PyE Times | Todas las noticias son 100% reales* (*en
+        universos paralelos donde los bugs se arreglan solos)
+      </p>
+    </footer>
+
+    <script>
+      // Set current date in the header
+      const dateElement = document.getElementById("date");
+      const options = {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      };
+      const currentDate = new Date().toLocaleDateString("es-ES", options);
+      dateElement.textContent = currentDate;
+    </script>
+  </body>
+</html>
