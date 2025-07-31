@@ -1,49 +1,8 @@
-:root {
-  /* Colores principales */
-  --color-primary: #d32f2f;
-  --color-primary-dark: #b71c1c;
-  --color-black: #000;
-  --color-white: #fff;
+@import url("../../variables.css");
 
-  /* Grises */
-  --color-text-primary: #333;
-  --color-text-secondary: #666;
-  --color-text-tertiary: #777;
-  --color-text-muted: #999;
-  --color-text-warning: #856404;
-  --color-text-light: #6c757d;
-
-  /* Fondos */
-  --color-bg-dark: #343a40;
-  --color-bg-darker: #2d2d2d;
-  --color-bg-darkest: #1a1a1a;
-  --color-bg-light-gray: #e9ecef;
-  --color-bg-warning: #fff3cd;
-
-  /* Bordes */
-  --color-border-primary: #000;
-  --color-border-secondary: #ddd;
-  --color-border-light: #eee;
-  --color-border-warning: #ffc107;
-  --color-border-gray: #adb5bd;
-
-  /* Enlaces */
-  --color-link: #007bff;
-  --color-link-hover: #d32f2f;
-
-  /* Efectos especiales */
-  --color-primary-light: #ff6b6b;
-}
-
-.tagline {
-  font-size: 0.9em;
-  font-style: italic;
-  color: var(--color-text-secondary);
-  margin-bottom: 10px;
-}
 
 .investigation-banner {
-  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  background: linear-gradient(135deg, var(--color-primary-dark-article) 0%, var(--color-primary) 100%);
   color: var(--color-white);
   text-align: center;
   padding: 12px;
@@ -91,11 +50,6 @@
   margin-bottom: 20px;
 }
 
-.byline {
-  font-size: 0.95em;
-  margin-bottom: 10px;
-  color: var(--color-text-secondary);
-}
 
 .date-info {
   font-size: 0.9em;
@@ -104,7 +58,7 @@
 
 .warning-box {
   background: var(--color-bg-warning);
-  border: 2px solid var(--color-warning);
+  border: 2px solid var(--color-border-warning);
   border-radius: 8px;
   padding: 20px;
   margin: 25px 0;
@@ -263,19 +217,6 @@
   color: var(--color-primary);
 }
 
-@media (max-width: 768px) {
-  .headline {
-    font-size: 2.2em;
-  }
-
-  .network-diagram {
-    grid-template-columns: 1fr;
-  }
-
-  .container {
-    padding: 20px 15px;
-  }
-}
 
 .back-link {
   display: inline-block;
@@ -299,4 +240,35 @@
   color: var(--color-link);
   text-decoration: none;
   font-size: 0.9em;
+}
+
+@media (width <=40rem) {
+  .back-link {
+    font-size: 0.7em;
+  }
+
+  .headline {
+    font-size: 1.8em;
+  }
+
+  .subheadline {
+    font-size: 1em
+  }
+
+  .date-info {
+    font-size: 0.7em;
+  }
+
+  .network-diagram {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    padding: 20px 15px;
+
+    & p,
+    li {
+      font-size: 0.8em;
+    }
+  }
 }

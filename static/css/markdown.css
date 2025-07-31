@@ -1,10 +1,4 @@
-:root {
-  /* Colores principales */
-  --color-primary: #d32f2f;
-  --color-text-primary: #333;
-  --color-text-secondary: #666;
-  --color-border-secondary: #ddd;
-}
+@import url("./variables.css");
 
 .article-content> :first-child::first-letter {
   float: left;
