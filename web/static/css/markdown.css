@@ -1,12 +1,6 @@
-:root {
-  /* Colores principales */
-  --color-primary: #d32f2f;
-  --color-text-primary: #333;
-  --color-text-secondary: #666;
-  --color-border-secondary: #ddd;
-}
+@import url("./variables.css");
 
-.article-content> :first-child::first-letter {
+.article-content > :first-child::first-letter {
   float: left;
   font-size: 4em;
   line-height: 1;
@@ -23,7 +17,6 @@
     margin-bottom: 20px;
     text-align: justify;
   }
-
 
   blockquote {
     background: var(--color-bg-secondary);

@@ -58,6 +58,6 @@
   --color-discord-button-hover: #4752c4;
 
   /* fonts */
-  --font-family: "Georgia", "Times New Roman", serif;
+  --font-family: "Playfair Display", serif, Helvetica, Roboto, Arial, sans-serif;
   --font-line-height: 1.6;
 }
