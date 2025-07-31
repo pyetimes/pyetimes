@@ -18,6 +18,7 @@
         
         <!-- Styles -->
         <link rel="stylesheet" href="/css/layout.css" />
+        <link rel="stylesheet" href="/css/404.css" />
         
         <!-- Scripts -->
         <script src="/js/web_components.js"></script>

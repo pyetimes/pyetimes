@@ -29,8 +29,9 @@
         }}
         
         <!-- Styles -->
+        <link rel="stylesheet" href="/css/global.css" />
         <link rel="stylesheet" href="/css/layout.css" />
-        <link rel="stylesheet" href="/css/editor/layout.css" />
+        <link rel="stylesheet" href="/css/editor.css" />
 
         <!-- Toast UI Editor -->
         <link

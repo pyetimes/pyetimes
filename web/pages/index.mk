@@ -14,8 +14,9 @@
         {{ Meta::default() }}
         
         <!-- Styles -->
+        <link rel="stylesheet" href="/css/global.css" />
         <link rel="stylesheet" href="/css/layout.css" />
-        
+
         <!-- Scripts -->
         <script src="/js/web_components.js"></script>
     </head>
