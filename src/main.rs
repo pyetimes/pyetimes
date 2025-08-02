@@ -2,11 +2,12 @@ use tower_http::trace::TraceLayer;
 
 mod api;
 mod db;
+mod middleware;
 mod models;
 mod pages;
 mod repo;
-mod responses;
 mod state;
+mod utils;
 mod web;
 
 #[tokio::main(flavor = "current_thread")]

@@ -7,7 +7,7 @@ pub struct Meta<'a> {
     pub preview: &'a str,
 }
 
-impl<'a> Default for Meta<'a> {
+impl Default for Meta<'_> {
     fn default() -> Self {
         Meta {
             title: "PyE Times | News",

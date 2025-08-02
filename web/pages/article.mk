@@ -1,5 +1,5 @@
 {{
-    use pulldown_cmark::{Parser, html};
+    use crate::utils::markdown::to_html;
     use crate::web::components::{ 
         Meta,
         Header,
@@ -22,6 +22,7 @@
         <link rel="stylesheet" href="/css/layout.css" />
         <link rel="stylesheet" href="/css/article.css" />
         <link rel="stylesheet" href="/css/markdown.css" />
+        <link rel="stylesheet" href="/css/editor.css" />
         
         <!-- Scripts -->
         <script src="/js/web_components.js"></script>
@@ -55,22 +56,57 @@
                         if let Some(date) = props.article.published_at {
                             format!("<x-time datetime=\"{}\"></x-time>", date.and_utc().timestamp())
                         } else {
-                            format!("No publicado aún ({})", props.article.id)
+                            format!("No publicado aún ({}) <button id=\"publish-button\">Publicar</button>", props.article.id)
                         }
-                    }}</div>
+                    }}
+                    </div>
                 </article>
 
-                <div class="article-content">{{ 
-                    let parser: Parser<'_> = Parser::new(&props.article.content);
-                    let mut html_content = String::new();
-                    html::push_html(&mut html_content, parser);
-
-                    html_content
-                }}</div>
+                <div class="article-content">{{ to_html(&props.article.content) }}</div>
                 </div>
             </div>
         </div>
 
+        <dialog id="credentials-dialog">
+            <div class="form">
+                <input type="text" id="email" placeholder="Email" />
+                <input type="password" id="password" placeholder="Contraseña" />
+                <button id="save-button" class="save-button">Publicar</button>
+            </div>
+        </dialog>
+
         {{ Footer {} }}
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const publishButton = document.getElementById("publish-button");
+                const dialog = document.getElementById("credentials-dialog");
+                const saveButton = document.getElementById("save-button");
+
+                publishButton.addEventListener("click", () => {
+                    dialog.showModal();
+                });
+                
+                saveButton.addEventListener("click", async () => {
+                    const email = document.getElementById("email").value;
+                    const password = document.getElementById("password").value;
+
+                    const response = await fetch(`/api/articles/{{ props.article.id }}/publish`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    if (response.ok) {
+                        dialog.close();
+                        window.location.reload();
+                    } else {
+                        alert("Error al publicar el artículo. Verifica tus credenciales.");
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

@@ -1,48 +1,29 @@
-use axum::{Json, Router, extract::State, http::StatusCode, routing};
+use axum::{
+    Json, Router,
+    extract::{Path, State},
+    http::StatusCode,
+    routing,
+};
 
 use crate::{
-    models::{Article, ArticleCreate, ErrorPayload},
-    repo::{ArticlesRepo, AuthorsRepo},
+    models::{Article, ArticleCreate, AuthorCredentials, ErrorPayload},
+    repo::ArticlesRepo,
     state::AppState,
+    utils::auth::validate_user_required,
 };
 
 pub fn routes() -> Router<AppState> {
-    Router::new().route("/", routing::post(post))
+    Router::new()
+        .route("/", routing::post(post))
+        .route("/{id}/publish", routing::post(publish)) // Temporalmente comentado
 }
 
 async fn post(
     State(state): State<AppState>,
     Json(info): Json<ArticleCreate>,
 ) -> Result<Json<Article>, ErrorPayload> {
-    let author = AuthorsRepo::get_by_email(&state.db, &info.author.email).await;
-
-    if author.is_err() {
-        return Err(ErrorPayload::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!(
-                "Error validating author credentials: {}",
-                author.unwrap_err()
-            ),
-        ));
-    }
-
-    let author = author.unwrap();
-
-    if let Some(ref a) = author {
-        if !bcrypt::verify(&info.author.password, &a.password_hash).unwrap_or(false) {
-            return Err(ErrorPayload::new(
-                StatusCode::UNAUTHORIZED,
-                "Invalid author credentials".to_string(),
-            ));
-        }
-    } else {
-        return Err(ErrorPayload::new(
-            StatusCode::UNAUTHORIZED,
-            "Invalid author credentials".to_string(),
-        ));
-    }
-
-    let author = author.unwrap();
+    let author =
+        validate_user_required(&state.db, &info.author.email, &info.author.password).await?;
 
     let article = ArticlesRepo::get_by_slug(&state.db, &info.slug).await;
 
@@ -102,4 +83,28 @@ async fn post(
     }
 
     Ok(Json(article.unwrap()))
+}
+
+#[derive(serde::Serialize)]
+struct SuccessResponse {
+    message: String,
+}
+
+async fn publish(
+    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    Json(credentials): Json<AuthorCredentials>,
+) -> Result<Json<SuccessResponse>, ErrorPayload> {
+    let _ = validate_user_required(&state.db, &credentials.email, &credentials.password).await?;
+
+    if ArticlesRepo::publish(&state.db, id).await.is_err() {
+        return Err(ErrorPayload::new(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Error publishing article".to_string(),
+        ));
+    }
+
+    Ok(Json(SuccessResponse {
+        message: "Article published successfully".to_string(),
+    }))
 }
