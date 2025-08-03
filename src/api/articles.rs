@@ -6,16 +6,16 @@ use axum::{
 };
 
 use crate::{
-    models::{Article, ArticleCreate, ErrorPayload},
-    pages::{self, Page},
-    repo::{ArticlesRepo, AuthorsRepo},
+    models::{Article, ArticleCreate, AuthorCredentials, ErrorPayload},
+    repo::ArticlesRepo,
     state::AppState,
+    utils::{auth::validate_user_required, discord},
 };
 
 pub fn routes() -> Router<AppState> {
     Router::new()
         .route("/", routing::post(post))
-        .route("/{title}", routing::get(get_by_title))
+        .route("/{id}/publish", routing::post(publish)) // Temporalmente comentado
 }
 
 async fn post(
@@ -23,39 +23,38 @@ async fn post(
     Json(info): Json<ArticleCreate>,
 ) -> Result<Json<Article>, ErrorPayload> {
     let author =
-        AuthorsRepo::validate_credentials(&state.db, &info.author.email, &info.author.password)
-            .await;
-
-    if author.is_err() {
-        return Err(ErrorPayload::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!(
-                "Error validating author credentials: {}",
-                author.unwrap_err()
-            ),
-        ));
-    }
-
-    let author = author.unwrap();
-
-    if author.is_none() {
-        return Err(ErrorPayload::new(
-            StatusCode::UNAUTHORIZED,
-            "Invalid author credentials".to_string(),
-        ));
-    }
-
-    let author = author.unwrap();
+        validate_user_required(&state.db, &info.author.email, &info.author.password).await?;
 
     let article = ArticlesRepo::get_by_slug(&state.db, &info.slug).await;
 
-    if article.is_ok() {
-        let article = article.unwrap();
+    let Ok(article) = article else {
+        return Err(ErrorPayload::new(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!(
+                "Error checking for existing article: {}",
+                article.unwrap_err()
+            ),
+        ));
+    };
 
+    let section = if info.section < 0 {
+        None
+    } else {
+        Some(info.section)
+    };
+
+    if let Some(article) = article {
         if article.author_id != author.id {
             return Err(ErrorPayload::new(
                 StatusCode::FORBIDDEN,
                 "You can only update your own articles".to_string(),
+            ));
+        }
+
+        if article.published {
+            return Err(ErrorPayload::new(
+                StatusCode::CONFLICT,
+                "Cannot update a published article".to_string(),
             ));
         }
 
@@ -66,6 +65,7 @@ async fn post(
             &info.content,
             &info.tags,
             &info.excerpt,
+            section,
         )
         .await;
 
@@ -81,55 +81,68 @@ async fn post(
 
     let article = ArticlesRepo::create(&state.db, author.id, &info).await;
 
-    if let Err(ref err) = article {
-        if let sqlx::Error::Database(db_err) = &err {
-            return match db_err.code() {
-                Some(code) if code == "23505" => Err(ErrorPayload::new(
-                    StatusCode::CONFLICT,
-                    format!("Article with slug '{}' already exists", info.slug),
-                )),
-                _ => Err(ErrorPayload::new(
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    format!("Database error: {}", db_err),
-                )),
-            };
-        }
-    }
-
-    Ok(Json(article.unwrap()))
-}
-
-async fn get_by_title(
-    State(state): State<AppState>,
-    Path(title): Path<String>,
-) -> Result<Page, ErrorPayload> {
-    let article = ArticlesRepo::get_by_slug(&state.db, &title).await;
-
-    if article.is_err() {
-        return Ok(pages::not_found());
+    if let Err(sqlx::Error::Database(db_err)) = article {
+        return match db_err.code() {
+            Some(code) if code == "23505" => Err(ErrorPayload::new(
+                StatusCode::CONFLICT,
+                format!("Article with slug '{}' already exists", info.slug),
+            )),
+            _ => Err(ErrorPayload::new(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Database error: {}", db_err),
+            )),
+        };
     }
 
     let article = article.unwrap();
 
-    let author = AuthorsRepo::get_by_id(&state.db, article.author_id).await;
-
-    if author.is_err() {
-        return Err(ErrorPayload::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Error fetching author: {}", author.unwrap_err()),
+    if let Some(discord_bot) = &state.discord_bot {
+        tokio::spawn(discord::notify_discord_bot(
+            discord_bot.clone(),
+            article.clone(),
         ));
     }
 
-    let author = author.unwrap();
+    Ok(Json(article))
+}
 
-    if author.is_none() {
+#[derive(serde::Serialize)]
+struct SuccessResponse {
+    message: String,
+}
+
+async fn publish(
+    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    Json(credentials): Json<AuthorCredentials>,
+) -> Result<Json<SuccessResponse>, ErrorPayload> {
+    let author =
+        validate_user_required(&state.db, &credentials.email, &credentials.password).await?;
+
+    if !author.can_publish {
         return Err(ErrorPayload::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            "Author not found".to_string(),
+            StatusCode::FORBIDDEN,
+            "You are not allowed to publish articles".to_string(),
         ));
     }
 
-    let author = author.unwrap();
+    let article = ArticlesRepo::publish(&state.db, id).await;
 
-    Ok(pages::article(&author, &article))
+    if article.is_err() {
+        return Err(ErrorPayload::new(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Error publishing article".to_string(),
+        ));
+    }
+
+    if let Some(discord_bot) = &state.discord_bot {
+        tokio::spawn(discord::notify_discord_bot(
+            discord_bot.clone(),
+            article.unwrap(),
+        ));
+    }
+
+    Ok(Json(SuccessResponse {
+        message: "Article published successfully".to_string(),
+    }))
 }

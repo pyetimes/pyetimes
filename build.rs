@@ -1,3 +1,3 @@
 fn main() {
-    magik::build("pages").expect("Failed to build templates");
+    println!("cargo:rerun-if-changed=templates/**/*.mk");
 }

@@ -11,7 +11,7 @@ pub struct Article {
     pub content: String,
     pub excerpt: String,
     pub author_id: i32,
-    pub section_id: i32,
+    pub section_id: Option<i32>,
     pub published: bool,
     pub published_at: Option<NaiveDateTime>,
     pub tags: Vec<String>,
@@ -27,4 +27,13 @@ pub struct ArticleCreate {
     pub excerpt: String,
     pub tags: Vec<String>,
     pub author: AuthorCredentials,
+    pub section: i32,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ArticleDiscordUpdate<'a> {
+    pub title: &'a str,
+    pub url: &'a str,
+    pub description: &'a str,
+    pub published: bool,
 }
