@@ -31,7 +31,6 @@ pub async fn validate_user(
     let author = author.unwrap();
 
     if let Some(author) = author {
-        // Verify password
         let password_valid = bcrypt::verify(password, &author.password_hash).unwrap_or(false);
 
         if password_valid {

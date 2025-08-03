@@ -28,3 +28,11 @@ pub struct ArticleCreate {
     pub tags: Vec<String>,
     pub author: AuthorCredentials,
 }
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ArticleDiscordUpdate<'a> {
+    pub title: &'a str,
+    pub url: &'a str,
+    pub description: &'a str,
+    pub published: bool,
+}

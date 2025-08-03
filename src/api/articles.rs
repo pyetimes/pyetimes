@@ -9,7 +9,7 @@ use crate::{
     models::{Article, ArticleCreate, AuthorCredentials, ErrorPayload},
     repo::ArticlesRepo,
     state::AppState,
-    utils::auth::validate_user_required,
+    utils::{auth::validate_user_required, discord},
 };
 
 pub fn routes() -> Router<AppState> {
@@ -44,6 +44,13 @@ async fn post(
             return Err(ErrorPayload::new(
                 StatusCode::FORBIDDEN,
                 "You can only update your own articles".to_string(),
+            ));
+        }
+
+        if article.published {
+            return Err(ErrorPayload::new(
+                StatusCode::CONFLICT,
+                "Cannot update a published article".to_string(),
             ));
         }
 
@@ -82,7 +89,16 @@ async fn post(
         };
     }
 
-    Ok(Json(article.unwrap()))
+    let article = article.unwrap();
+
+    if let Some(discord_bot) = &state.discord_bot {
+        tokio::spawn(discord::notify_discord_bot(
+            discord_bot.clone(),
+            article.clone(),
+        ));
+    }
+
+    Ok(Json(article))
 }
 
 #[derive(serde::Serialize)]
@@ -95,12 +111,29 @@ async fn publish(
     Path(id): Path<i32>,
     Json(credentials): Json<AuthorCredentials>,
 ) -> Result<Json<SuccessResponse>, ErrorPayload> {
-    let _ = validate_user_required(&state.db, &credentials.email, &credentials.password).await?;
+    let author =
+        validate_user_required(&state.db, &credentials.email, &credentials.password).await?;
 
-    if ArticlesRepo::publish(&state.db, id).await.is_err() {
+    if !author.can_publish {
+        return Err(ErrorPayload::new(
+            StatusCode::FORBIDDEN,
+            "You are not allowed to publish articles".to_string(),
+        ));
+    }
+
+    let article = ArticlesRepo::publish(&state.db, id).await;
+
+    if article.is_err() {
         return Err(ErrorPayload::new(
             StatusCode::INTERNAL_SERVER_ERROR,
             "Error publishing article".to_string(),
+        ));
+    }
+
+    if let Some(discord_bot) = &state.discord_bot {
+        tokio::spawn(discord::notify_discord_bot(
+            discord_bot.clone(),
+            article.unwrap(),
         ));
     }
 

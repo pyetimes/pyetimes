@@ -81,15 +81,19 @@ impl ArticlesRepo {
         Ok(article)
     }
 
-    pub async fn publish(db: &PgPool, id: i32) -> Result<(), sqlx::Error> {
+    pub async fn publish(db: &PgPool, id: i32) -> Result<Article, sqlx::Error> {
         let query = r#"
             UPDATE articles
             SET published = TRUE, published_at = NOW()
             WHERE id = $1
+            RETURNING *
         "#;
 
-        let _ = sqlx::query(query).bind(id).execute(db).await?;
+        let article = sqlx::query_as::<_, Article>(query)
+            .bind(id)
+            .fetch_one(db)
+            .await?;
 
-        Ok(())
+        Ok(article)
     }
 }

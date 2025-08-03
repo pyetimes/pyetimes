@@ -9,6 +9,7 @@ pub struct Author {
     #[serde(skip_serializing)]
     pub password_hash: String,
     pub bio: Option<String>,
+    pub can_publish: bool,
     pub created_at: NaiveDateTime,
 }
 

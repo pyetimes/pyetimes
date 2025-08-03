@@ -172,7 +172,7 @@
                     }
 
                     // Send data to the server
-                    fetch("/articles", {
+                    fetch("/api/articles", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -184,11 +184,9 @@
                             alert(await response.text());
                             return;
                         }
-                        alert(
-                            "Artículo guardado exitosamente! urL: https://pyetimes.daril.dev/articles/" +
-                            (await response.json()).slug
-                        );
-                        cleanAllInputs();
+                        
+                        let redirectUrl = "/drafts/" + (await response.json()).slug;
+                        window.location.href = redirectUrl;
                     })
                     .catch((error) => {
                         alert("Error al guardar el artículo: " + error.message);

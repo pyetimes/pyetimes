@@ -53,10 +53,9 @@
                     <h2 class="subheadline">{{ props.article.excerpt }}</h2>
                     <div class="byline">Por {{ props.author.name }}</div>
                     <div class="date-info">Publicado: {{
-                        if let Some(date) = props.article.published_at {
-                            format!("<x-time datetime=\"{}\"></x-time>", date.and_utc().timestamp())
-                        } else {
-                            format!("No publicado aún ({}) <button id=\"publish-button\">Publicar</button>", props.article.id)
+                        match props.article.published_at {
+                            Some(date) if props.article.published => format!("<x-time datetime=\"{}\"></x-time>", date.and_utc().timestamp()),
+                            _ => format!("No publicado aún ({}) <button id=\"publish-button\">Publicar</button>", props.article.id),
                         }
                     }}
                     </div>
@@ -101,7 +100,7 @@
 
                     if (response.ok) {
                         dialog.close();
-                        window.location.reload();
+                        window.location.href = `/articles/{{ props.article.slug }}`;
                     } else {
                         alert("Error al publicar el artículo. Verifica tus credenciales.");
                     }

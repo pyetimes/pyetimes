@@ -2,6 +2,7 @@ use tower_http::trace::TraceLayer;
 
 mod api;
 mod db;
+mod error;
 mod middleware;
 mod models;
 mod pages;
@@ -21,6 +22,9 @@ async fn main() {
 
     dotenv::dotenv().ok();
 
+    // TODO: create a function to create AppState
+    // and move this logic there
+    // AppState::from_env() -> Result<AppState, Error>
     let app_sate = state::AppState {
         db: db::create_pool().await.map_err(|e| {
             panic!(
@@ -28,6 +32,7 @@ async fn main() {
                 e
             )
         }).unwrap(),
+        discord_bot: state::DiscordBotConfig::from_env()
     };
 
     let app = api::routes()
