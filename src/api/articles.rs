@@ -27,7 +27,7 @@ async fn post(
 
     let article = ArticlesRepo::get_by_slug(&state.db, &info.slug).await;
 
-    if article.is_err() {
+    let Ok(article) = article else {
         return Err(ErrorPayload::new(
             StatusCode::INTERNAL_SERVER_ERROR,
             format!(
@@ -35,9 +35,13 @@ async fn post(
                 article.unwrap_err()
             ),
         ));
-    }
+    };
 
-    let article = article.unwrap();
+    let section = if info.section < 0 {
+        None
+    } else {
+        Some(info.section)
+    };
 
     if let Some(article) = article {
         if article.author_id != author.id {
@@ -61,6 +65,7 @@ async fn post(
             &info.content,
             &info.tags,
             &info.excerpt,
+            section,
         )
         .await;
 

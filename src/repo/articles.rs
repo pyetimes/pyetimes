@@ -16,8 +16,8 @@ impl ArticlesRepo {
         article: &ArticleCreate,
     ) -> Result<Article, sqlx::Error> {
         let query = r#"
-            INSERT INTO articles (title, slug, content, author_id, tags, excerpt)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            INSERT INTO articles (title, slug, content, author_id, tags, excerpt, section_id)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *
         "#;
 
@@ -28,6 +28,7 @@ impl ArticlesRepo {
             .bind(author_id)
             .bind(ArticlesRepo::lowercase_tags(&article.tags))
             .bind(&article.excerpt)
+            .bind(article.section) // Assuming section is an Option<i32>
             .fetch_one(db)
             .await?;
 
@@ -61,11 +62,12 @@ impl ArticlesRepo {
         content: &str,
         tags: &[String],
         excerpt: &str,
+        section: Option<i32>,
     ) -> Result<Article, sqlx::Error> {
         let query = r#"
             UPDATE articles
-            SET content = $1, tags = $2, excerpt = $3, title = $4
-            WHERE slug = $5
+            SET content = $1, tags = $2, excerpt = $3, title = $4, section_id = $5
+            WHERE slug = $6
             RETURNING *
         "#;
 
@@ -74,7 +76,8 @@ impl ArticlesRepo {
             .bind(ArticlesRepo::lowercase_tags(tags))
             .bind(excerpt)
             .bind(title)
-            .bind(slug) // assuming slug is the same as title for this example
+            .bind(slug)
+            .bind(section)
             .fetch_one(db)
             .await?;
 

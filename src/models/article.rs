@@ -27,6 +27,7 @@ pub struct ArticleCreate {
     pub excerpt: String,
     pub tags: Vec<String>,
     pub author: AuthorCredentials,
+    pub section: i32,
 }
 
 #[derive(Debug, Clone, Serialize)]

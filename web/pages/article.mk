@@ -85,6 +85,12 @@
                 publishButton.addEventListener("click", () => {
                     dialog.showModal();
                 });
+
+                dialog.addEventListener("click", () => {
+                    if (event.target === dialog) {
+                        dialog.close();
+                    }
+                });
                 
                 saveButton.addEventListener("click", async () => {
                     const email = document.getElementById("email").value;

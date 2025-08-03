@@ -49,18 +49,18 @@
 
             <div class="container">
                 <div style="display: flex; gap: 10px">
-                <input
-                    type="text"
-                    id="title"
-                    placeholder="Título del Artículo"
-                    value="{{ props.article.map_or("".to_string(), |a| a.title.to_string()) }}"
-                />
-                <input
-                    type="text"
-                    id="slug"
-                    placeholder="URL Amigable"
-                    value="{{ props.article.map_or("".to_string(), |a| a.slug.to_string()) }}"
-                />
+                    <input
+                        type="text"
+                        id="title"
+                        placeholder="Título del Artículo"
+                        value="{{ props.article.map_or("".to_string(), |a| a.title.to_string()) }}"
+                    />
+                    <input
+                        type="text"
+                        id="slug"
+                        placeholder="URL Amigable"
+                        value="{{ props.article.map_or("".to_string(), |a| a.slug.to_string()) }}"
+                    />
                 </div>
                 <input
                     type="text"
@@ -68,12 +68,22 @@
                     placeholder="Extracto del Artículo"
                     value="{{ props.article.map_or("".to_string(), |a| a.excerpt.to_string()) }}"
                 />
-                <input
-                    type="text"
-                    id="tags"
-                    placeholder="Etiquetas (separadas por comas)"
-                    value="{{ props.article.map_or("".to_string(), |a| a.tags.join(", ")) }}"
-                />
+                <div style="display: flex; gap: 10px">
+                    <input
+                        type="text"
+                        id="tags"
+                        placeholder="Etiquetas (separadas por comas)"
+                        value="{{ props.article.map_or("".to_string(), |a| a.tags.join(", ")) }}"
+                    />
+                    <select id="section">
+                        <option value="-1">Sección: Ninguna</option>
+                        {{
+                            props.sections.iter().map(
+                                |section| format!("<option value=\"{}\">Sección: {}</option>", section.id, section.title)
+                            ).collect::<String>()
+                        }}
+                    </select>
+                </div>
                 
                 <div id="editor"></div>
 
@@ -142,6 +152,7 @@
                             email: document.getElementById("email").value,
                             password: document.getElementById("password").value,
                         },
+                        section: parseInt(document.getElementById("section").value, 10),
                     };
 
                     if (

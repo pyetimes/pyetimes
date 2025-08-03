@@ -3,10 +3,11 @@ use axum::http::StatusCode;
 use axum::response::Html;
 use axum::{Router, extract::State, routing::get};
 use magik::Renderable;
+use tokio::join;
 
 use crate::middleware::CacheControlLayer;
 use crate::models::ErrorPayload;
-use crate::repo::{ArticlesRepo, AuthorsRepo, FeedRepo};
+use crate::repo::{ArticlesRepo, AuthorsRepo, FeedRepo, SectionsRepo};
 use crate::state::AppState;
 use crate::web::pages;
 
@@ -58,28 +59,29 @@ pub struct GetParams {
 }
 
 async fn editor(State(state): State<AppState>, id: Query<GetParams>) -> Html<String> {
-    if id.article.is_none() {
-        return Html(pages::Editor { article: None }.render());
-    }
-
-    let article = ArticlesRepo::get_by_id(&state.db, id.article.unwrap()).await;
-
-    if article.is_err() {
-        return Html(pages::Editor { article: None }.render());
-    }
-
-    let article = article.unwrap();
-
-    if let Some(article) = article {
-        return Html(
-            pages::Editor {
-                article: Some(&article),
-            }
-            .render(),
+    let (article, sections) = if let Some(article_id) = id.article {
+        let (article, sections) = join!(
+            ArticlesRepo::get_by_id(&state.db, article_id),
+            SectionsRepo::get_sections_flat(&state.db)
         );
-    }
 
-    Html(pages::Editor { article: None }.render())
+        (article.unwrap_or(None), sections.unwrap_or(Vec::new()))
+    } else {
+        (
+            None,
+            SectionsRepo::get_sections_flat(&state.db)
+                .await
+                .unwrap_or(Vec::new()),
+        )
+    };
+
+    Html(
+        pages::Editor {
+            article: article.as_ref(),
+            sections: &sections,
+        }
+        .render(),
+    )
 }
 
 async fn published_article_page(

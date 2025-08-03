@@ -1,11 +1,15 @@
-use axum::{http::Response, response::IntoResponse};
+use axum::response::{IntoResponse, Response};
+use reqwest::StatusCode;
+use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("Database error: {0}")]
     Database(#[from] sqlx::Error),
+
     #[error("Not found")]
     NotFound,
+
     #[error("Unauthorized")]
     Unauthorized,
 }
