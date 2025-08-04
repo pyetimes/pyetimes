@@ -1,7 +1,12 @@
 FROM rust:slim-bullseye AS builder
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libssl-dev \
+    pkg-config
+
 WORKDIR /app
 COPY ./Cargo.toml ./Cargo.lock ./
+COPY ./build.rs ./
 RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN cargo build --release
 
@@ -11,8 +16,11 @@ RUN cargo build --release
 
 FROM debian:bullseye-slim AS runtime
 
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libssl-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
