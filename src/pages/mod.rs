@@ -4,6 +4,7 @@ use axum::response::Html;
 use axum::{Router, extract::State, routing::get};
 use magik::Renderable;
 use tokio::join;
+use tracing::info;
 
 use crate::middleware::CacheControlLayer;
 use crate::models::ErrorPayload;
@@ -30,27 +31,25 @@ pub fn routes() -> Router<AppState> {
 }
 
 async fn index(State(state): State<AppState>) -> Html<String> {
-    let feed = FeedRepo::get(&state.db).await;
-
-    if feed.is_err() {
-        return Html(
+    match FeedRepo::get(&state.db).await {
+        Ok((main_story, sections)) => Html(
             pages::Index {
-                main_story: None,
-                sections: Vec::new(),
+                main_story: main_story,
+                sections: sections,
             }
             .render(),
-        );
-    }
-
-    let (main_story, sections) = feed.unwrap();
-
-    Html(
-        pages::Index {
-            main_story,
-            sections,
+        ),
+        Err(e) => {
+            info!("Error fetching feed: {}", e);
+            Html(
+                pages::Index {
+                    main_story: None,
+                    sections: Vec::new(),
+                }
+                .render(),
+            )
         }
-        .render(),
-    )
+    }
 }
 
 #[derive(serde::Deserialize)]
