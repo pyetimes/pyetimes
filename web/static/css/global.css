@@ -18,8 +18,10 @@ body {
   line-height: var(--font-line-height);
   color: var(--color-text-primary);
   background: var(--color-bg-primary);
+  padding: 20px;
   min-height: 100vh;
-  /* Altura mínima del viewport */
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
 }

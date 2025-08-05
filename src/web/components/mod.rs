@@ -32,6 +32,7 @@ pub struct ArticlePreview<'a> {
     pub title: &'a str,
     pub slug: &'a str,
     pub excerpt: &'a str,
+    pub author: &'a str,
 }
 
 #[template(path = "./web/components/editor_header.mk")]

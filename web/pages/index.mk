@@ -47,6 +47,7 @@
                             title: article.title.as_str(),
                             slug: article.slug.as_str(),
                             excerpt: article.excerpt.as_str(),
+                            author: "Test",
                         }).collect(),
                     }).collect::<Vec<Section>>()
                 }}</div>

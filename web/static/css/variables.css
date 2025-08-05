@@ -58,6 +58,8 @@
   --color-discord-button-hover: #4752c4;
 
   /* fonts */
-  --font-family: "Playfair Display", serif, Helvetica, Roboto, Arial, sans-serif;
+  /* --font-family: "Playfair Display", serif, Helvetica, Roboto, Arial, sans-serif; */
+  --font-family-title: "Libre Franklin", sans-serif;
+  --font-family: "Noto Serif", serif;
   --font-line-height: 1.6;
 }
