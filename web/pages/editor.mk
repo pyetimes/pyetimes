@@ -5,7 +5,6 @@
         Meta,
         Header,
         Footer,
-        EditorHeader,
     };
 
     fn escape_string(s: &str) -> String {
@@ -45,9 +44,19 @@
     </head>
     <body>
         <div class="main-wrapper">
-            {{ EditorHeader {} }}
+            {{ Header {} }}
 
             <div class="container">
+                <h2 class="editor-title">
+                    {{
+                        if props.article.is_some() {
+                            "Editar Artículo"
+                        } else {
+                            "Crear Nuevo Artículo"
+                        }
+                    }}
+                </h2>
+                <br/>
                 <div style="display: flex; gap: 10px">
                     <input
                         type="text"

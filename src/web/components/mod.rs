@@ -7,7 +7,6 @@ pub use meta::*;
 
 #[template(path = "./web/components/main_article.mk")]
 pub struct MainArticle<'a> {
-    pub id: i32,
     pub headline: &'a str,
     pub slug: &'a str,
     pub author_name: &'a str,
@@ -33,6 +32,7 @@ pub struct ArticlePreview<'a> {
     pub slug: &'a str,
     pub excerpt: &'a str,
     pub author: &'a str,
+    pub date: NaiveDateTime,
 }
 
 #[template(path = "./web/components/editor_header.mk")]

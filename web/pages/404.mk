@@ -17,6 +17,7 @@
         }}
         
         <!-- Styles -->
+        <link rel="stylesheet" href="/css/global.css" />
         <link rel="stylesheet" href="/css/layout.css" />
         <link rel="stylesheet" href="/css/404.css" />
         
@@ -28,113 +29,6 @@
             {{ Header {} }}
 
             <div class="container">
-                <style>
-                    .header-404 {
-                        border-bottom: 3px solid #000;
-                        padding: 40px 20px;
-                        text-align: center;
-                        background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%);
-                        width: 100%;
-                        max-width: 800px;
-                        margin-bottom: 40px;
-                        border-radius: 10px;
-                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-                    }
-
-                    .error-section {
-                        text-align: center;
-                        width: 100%;
-                        padding: 0 20px;
-                    }
-
-                    .error-code {
-                        cursor: pointer;
-                        font-size: 8em;
-                        font-weight: bold;
-                        color: #d32f2f;
-                        margin-bottom: 20px;
-                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-                    }
-
-                    .error-title {
-                        font-size: 2.5em;
-                        font-weight: bold;
-                        margin-bottom: 15px;
-                        color: #000;
-                    }
-
-                    .error-subtitle {
-                        font-size: 1.2em;
-                        color: #666;
-                        margin-bottom: 30px;
-                        line-height: 1.5;
-                    }
-
-                    .error-message {
-                        font-size: 1em;
-                        color: #555;
-                        margin-bottom: 30px;
-                        line-height: 1.6;
-                        font-style: italic;
-                    }
-
-                    .back-button {
-                        background: #d32f2f;
-                        color: white;
-                        padding: 15px 30px;
-                        border: none;
-                        border-radius: 5px;
-                        cursor: pointer;
-                        text-decoration: none;
-                        display: inline-block;
-                        transition: background 0.3s ease;
-                        font-family: "Georgia", "Times New Roman", serif;
-                        font-size: 1.1em;
-                        font-weight: bold;
-                    }
-
-                    .back-button:hover {
-                        background: #b71c1c;
-                        transform: translateY(-2px);
-                        box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
-                    }
-
-                    .fun-facts {
-                        margin-top: 40px;
-                        padding: 20px;
-                        background: #f8f9fa;
-                        border-radius: 8px;
-                        border-left: 4px solid #d32f2f;
-                    }
-
-                    .fun-facts h3 {
-                        color: #d32f2f;
-                        margin-bottom: 10px;
-                        font-size: 1.2em;
-                    }
-
-                    .fun-facts p {
-                        color: #666;
-                        font-size: 0.9em;
-                        line-height: 1.5;
-                    }
-
-                    @media (max-width: 768px) {
-                        .error-code {
-                        font-size: 5em;
-                        }
-
-                        .error-title {
-                        font-size: 1.8em;
-                        }
-
-                        .header-404 {
-                        padding: 30px 15px;
-                        margin-bottom: 30px;
-                        }
-                    }
-                </style>
-
                 <div class="error-section">
                     <div class="error-code">404</div>
                     <h1 class="error-title">Página No Encontrada</h1>

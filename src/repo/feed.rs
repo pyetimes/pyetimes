@@ -1,5 +1,6 @@
-use std::collections::HashMap;
+use std::{collections::HashMap};
 
+use chrono::{ NaiveDateTime};
 use sqlx::{FromRow, PgPool, Row};
 use tokio::join;
 
@@ -10,9 +11,11 @@ pub struct FeedRepo;
 impl FeedRepo {
     pub async fn get(
         db: &PgPool,
-    ) -> Result<(Option<(Article, Author)>, Vec<Section>), sqlx::Error> {
+    ) -> Result<(Option<(Article, Author)>, Vec<Section>, HashMap<i32, Author>), sqlx::Error> {
         let (story, sections) = join!(Self::get_main_story(db), Self::get_sections(db),);
-        Ok((story?, sections?))
+        let (sections, authors) = sections?;
+
+        Ok((story?, sections, authors))
     }
 
     async fn get_main_story(db: &PgPool) -> Result<Option<(Article, Author)>, sqlx::Error> {
@@ -33,8 +36,8 @@ impl FeedRepo {
 
         Ok(None)
     }
- 
-    async fn get_sections(db: &PgPool) -> Result<Vec<Section>, sqlx::Error> {
+
+    async fn get_sections(db: &PgPool) -> Result<(Vec<Section>, HashMap<i32, Author>), sqlx::Error> {
         let row = sqlx::query(
             r#"
                 SELECT 
@@ -51,6 +54,10 @@ impl FeedRepo {
                     a.tags as article_tags,
                     a.created_at as article_created_at,
                     a.updated_at as article_updated_at,
+
+                    -- Author fields
+                    au.id as author_id,
+                    au.name as author_name,
                     
                     -- Section fields
                     s.id as section_id,
@@ -58,6 +65,7 @@ impl FeedRepo {
                     s.title as section_title
                 FROM articles a 
                 JOIN sections s ON a.section_id = s.id 
+                JOIN authors au ON a.author_id = au.id
                 WHERE 
                     a.published = TRUE AND
                     a.id IN (
@@ -76,6 +84,7 @@ impl FeedRepo {
 
         let mut sections: HashMap<i32, Section> = HashMap::with_capacity(row.len());
         let mut articles: HashMap<i32, Vec<Article>> = HashMap::with_capacity(row.len());
+        let mut authors: HashMap<i32, Author> = HashMap::with_capacity(row.len());
 
         row.iter()
             .map(|row| {
@@ -112,6 +121,18 @@ impl FeedRepo {
                     }
                 }
 
+                let author = Author {
+                    id: row.try_get("author_id")?,
+                    name: row.try_get("author_name")?,
+                    bio: None,
+                    can_publish: false,
+                    created_at: NaiveDateTime::MIN,
+                    email: "".to_string(),
+                    password_hash: "".to_string(),
+                };
+
+                authors.insert(author.id, author);
+
                 Ok::<_, sqlx::Error>(())
             })
             .collect::<Result<Vec<_>, sqlx::Error>>()?;
@@ -126,6 +147,6 @@ impl FeedRepo {
 
         sections.sort_by_key(|s| s.priority);
 
-        Ok(sections)
+        Ok((sections, authors))
     }
 }

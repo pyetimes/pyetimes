@@ -28,7 +28,6 @@
                 <div class="main-grid">{{
                     if let Some((article, author)) = &props.main_story {
                         MainArticle {
-                            id: article.id,
                             headline: article.title.as_str(),
                             slug: article.slug.as_str(),
                             author_name: author.name.as_str(),
@@ -47,7 +46,8 @@
                             title: article.title.as_str(),
                             slug: article.slug.as_str(),
                             excerpt: article.excerpt.as_str(),
-                            author: "Test",
+                            author: props.authors.get(&article.author_id).map(|a| a.name.as_str()).unwrap_or("Unknown"),
+                            date: article.published_at.unwrap_or_default(),
                         }).collect(),
                     }).collect::<Vec<Section>>()
                 }}</div>

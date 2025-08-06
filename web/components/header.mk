@@ -11,8 +11,8 @@
     </div>
     <nav class="navbar">
         <ul class="nav-links">
-            <li><a href="#">Inicio</a></li>
-            <li><a href="#">Sobre Nosotros</a></li>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/about">Sobre Nosotros</a></li>
         </ul>
     </nav>
 </header>

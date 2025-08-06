@@ -54,7 +54,7 @@
                     <div class="byline">Por {{ props.author.name }}</div>
                     <div class="date-info">Publicado: {{
                         match props.article.published_at {
-                            Some(date) if props.article.published => format!("<x-time datetime=\"{}\"></x-time>", date.and_utc().timestamp()),
+                            Some(date) if props.article.published => format!("<x-time timestamp=\"{}\"></x-time>", date.and_utc().timestamp()),
                             _ => format!("No publicado aún ({}) <button id=\"publish-button\">Publicar</button>", props.article.id),
                         }
                     }}
