@@ -1,0 +1,29 @@
+name: Deploy to Prod
+
+on:
+  push:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup SSH Key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrtes.SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H  >> ~/.ssh/known_hosts
+
+    - name: Deploy
+      run: |
+        ssh deploy-user@129.80.59.176 "echo 'Hola' > test.txt" 
