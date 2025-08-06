@@ -26,5 +26,4 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh deploy-user@129.80.59.176
-        echo 'Hola' > test.txt
+        ssh deploy-user@129.80.59.176 "sudo bash -c 'cd /home/ubuntu/pyetimes_proyect/pyetimes && git pull && docker-compose build && docker-compose up -d'"
