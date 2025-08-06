@@ -2,6 +2,7 @@ use axum::response::{IntoResponse, Response};
 use reqwest::StatusCode;
 use thiserror::Error;
 
+#[allow(dead_code)]
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("Database error: {0}")]

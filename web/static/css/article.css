@@ -1,11 +1,9 @@
 @import url("../../variables.css");
 
 .investigation-banner {
-  background: linear-gradient(
-    135deg,
-    var(--color-primary-dark-article) 0%,
-    var(--color-primary) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-primary-dark-article) 0%,
+      var(--color-primary) 100%);
   color: var(--color-white);
   text-align: center;
   padding: 12px;
@@ -18,8 +16,6 @@
 
 .container {
   max-width: 1000px;
-  margin: 0 auto;
-  padding: 0px 20px;
 }
 
 .article-header {
@@ -146,11 +142,9 @@
 }
 
 .staff-section {
-  background: linear-gradient(
-    135deg,
-    var(--color-bg-darkest) 0%,
-    var(--color-bg-darker) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-bg-darkest) 0%,
+      var(--color-bg-darker) 100%);
   color: var(--color-white);
   padding: 30px;
   border-radius: 10px;
@@ -225,7 +219,6 @@
 
 .back-link {
   display: inline-block;
-  margin-bottom: 20px;
   color: var(--color-primary);
   text-decoration: none;
   font-size: 0.9em;
@@ -237,8 +230,20 @@
 
 .article-header-links {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
+}
+
+.tag-link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  margin: 0px 5px;
+  padding: 0px 5px;
+  border-radius: 5px;
+  border: 1px solid var(--color-border-secondary);
+  /* cursor: pointer; */
 }
 
 #publish-button {
@@ -271,10 +276,6 @@
 }
 
 @media (width <=40rem) {
-  .back-link {
-    font-size: 0.7em;
-  }
-
   .headline {
     font-size: 1.8em;
   }
@@ -292,7 +293,6 @@
   }
 
   .container {
-    padding: 20px 15px;
 
     & p,
     li {

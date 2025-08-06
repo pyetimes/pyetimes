@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use axum::extract::{Path, Query};
 use axum::http::StatusCode;
 use axum::response::Html;
@@ -28,14 +30,19 @@ pub fn routes() -> Router<AppState> {
         )
         .route("/drafts/{slug}", get(draft_article_page))
         .route("/register", get(register))
+        .route(
+            "/about",
+            get(about).layer(CacheControlLayer::with_lifespan(3600)),
+        )
 }
 
 async fn index(State(state): State<AppState>) -> Html<String> {
     match FeedRepo::get(&state.db).await {
-        Ok((main_story, sections)) => Html(
+        Ok((main_story, sections, authors)) => Html(
             pages::Index {
-                main_story: main_story,
-                sections: sections,
+                main_story,
+                sections,
+                authors,
             }
             .render(),
         ),
@@ -45,6 +52,7 @@ async fn index(State(state): State<AppState>) -> Html<String> {
                 pages::Index {
                     main_story: None,
                     sections: Vec::new(),
+                    authors: HashMap::new(),
                 }
                 .render(),
             )
@@ -102,50 +110,42 @@ async fn article_page_impl(
     slug: String,
     is_draft: bool,
 ) -> Result<Html<String>, ErrorPayload> {
-    let article = ArticlesRepo::get_by_slug(&state.db, &slug).await;
-
-    if article.is_err() {
-        return Err(ErrorPayload::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Error fetching article: {}", article.unwrap_err()),
-        ));
-    }
-
-    let article = article.unwrap();
-
-    if article.is_none() {
-        return Ok(Html(pages::NotFound {}.render()));
-    }
-
-    let article = article.unwrap();
-
-    if is_draft {
-        if article.published {
+    let article = match ArticlesRepo::get_by_slug(&state.db, &slug).await {
+        Ok(Some(article)) => article,
+        Ok(None) => {
+            info!("Article with slug '{}' not found", slug);
             return Ok(Html(pages::NotFound {}.render()));
         }
-    } else if !article.published {
+        Err(e) => {
+            info!("Error fetching article by slug '{}': {}", slug, e);
+            return Ok(Html(pages::NotFound {}.render()));
+        }
+    };
+
+    if is_draft == article.published {
         return Ok(Html(pages::NotFound {}.render()));
     }
 
-    let author = AuthorsRepo::get_by_id(&state.db, article.author_id).await;
-
-    if author.is_err() {
-        return Err(ErrorPayload::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Error fetching author: {}", author.unwrap_err()),
-        ));
-    }
-
-    let author = author.unwrap();
-
-    if author.is_none() {
-        return Err(ErrorPayload::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            "Author not found".to_string(),
-        ));
-    }
-
-    let author = author.unwrap();
+    let author = match AuthorsRepo::get_by_id(&state.db, article.author_id).await {
+        Ok(Some(author)) => author,
+        Ok(None) => {
+            info!(
+                "Author with ID '{}' not found for article '{}'",
+                article.author_id, slug
+            );
+            return Err(ErrorPayload::new(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Author not found".to_string(),
+            ));
+        }
+        Err(e) => {
+            info!("Error fetching author for article '{}': {}", slug, e);
+            return Err(ErrorPayload::new(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Error fetching author: {}", e),
+            ));
+        }
+    };
 
     Ok(Html(
         pages::Article {
@@ -158,4 +158,8 @@ async fn article_page_impl(
 
 pub async fn register() -> Html<String> {
     Html(pages::Register {}.render())
+}
+
+pub async fn about() -> Html<String> {
+    Html(pages::About {}.render())
 }

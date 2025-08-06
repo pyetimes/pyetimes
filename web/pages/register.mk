@@ -3,7 +3,6 @@
         Meta,
         Header,
         Footer,
-        EditorHeader,
     };
 }}
 <!DOCTYPE html>
@@ -27,7 +26,7 @@
     </head>
     <body>
         <div class="main-wrapper">
-            {{ EditorHeader {} }}
+            {{ Header {} }}
 
             <div class="container">
                 <div class="form">

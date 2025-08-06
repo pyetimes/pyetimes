@@ -1,5 +1,7 @@
 mod editor;
 
+use std::collections::HashMap;
+
 use magik_macro::template;
 
 use crate::models;
@@ -9,6 +11,7 @@ pub use editor::Editor;
 pub struct Index {
     pub main_story: Option<(models::Article, models::Author)>,
     pub sections: Vec<models::Section>,
+    pub authors: HashMap<i32, models::Author>,
 }
 
 #[template(path = "./web/pages/404.mk")]
@@ -22,3 +25,6 @@ pub struct Article<'a> {
 
 #[template(path = "./web/pages/register.mk")]
 pub struct Register {}
+
+#[template(path = "./web/pages/about.mk")]
+pub struct About {}
