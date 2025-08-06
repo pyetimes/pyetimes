@@ -80,10 +80,10 @@
                     MIT que permite su uso y modificación, pero los artículos son propiedad de sus respectivos autores.
                 </p>
                 <p>
-                    Puedes encontrar el código fuente en <a href="https://github.com/darilrt/pyetimes">GitHub</a>.
+                    Puedes encontrar el código fuente en <a href="https://github.com/pyetimes/pyetimes">GitHub</a>.
                 </p>
                 <p>
-                    O el codigo del bot en <a href="github.com/C-Ewan/dsbot-pyetimes">GitHub</a>.
+                    El codigo del bot en <a href="https://github.com/pyetimes/discord-bot">GitHub</a>.
                 </p>
             </div>
         </div>
