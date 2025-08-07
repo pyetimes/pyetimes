@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 use magik_macro::template;
 
-use crate::models;
+use crate::{error::ProblemDetails, models};
 pub use editor::Editor;
 
 #[template(path = "./web/pages/index.mk")]
@@ -30,4 +30,6 @@ pub struct Register {}
 pub struct About {}
 
 #[template(path = "./web/pages/error.mk")]
-pub struct Error {}
+pub struct Error<'a> {
+    pub details: ProblemDetails<'a>,
+}

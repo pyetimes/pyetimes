@@ -4,13 +4,16 @@
         Header,
         Footer,
     };
+    use crate::error::ProblemDetails;
+
+    let ProblemDetails { title, status, detail } = &props.details;
 }}
 <!DOCTYPE html>
 <html>
     <head>
         {{ 
             Meta {
-                title: format!("Error {} - PyE Times", props.code),
+                title: format!("Error {} - PyE Times", 500).as_str(),
                 description: "Lo sentimos, a ocurrió un error inesperado.",
                 ..Default::default()
             }
@@ -30,16 +33,11 @@
 
             <div class="container">
                 <div class="error-section">
-                    <div class="error-code">{{ props.code }}</div>
-                    <h1 class="error-title">Error {{ props.code }}</h1>
+                    <div class="error-code">{{ *status }}</div>
+                    <h1 class="error-title">Error {{ *status }}</h1>
                     <p class="error-subtitle">¡Ups! A ocurrido un error inesperado.</p>
 
-                    <p class="error-message">
-                        "A ocurrido un error inesperado. Nuestros desarrolladores están
-                        investigando si esto es un bug o un feature no documentado."
-                        <br />
-                        Si ha causado algun problema es culpa de Phosphorus, no de nosotros.
-                    </p>
+                    <p class="error-message"></p>
 
                     <a href="/" class="back-button">← Volver al PyE Times</a>
 
@@ -57,16 +55,9 @@
 
                 <script>
                     const errorMessages = [
-                        "Esta página está tomando un break como los developers en sprint review.",
-                        "Error 404: Página no encontrada. ¿Probaste con Ctrl+F5?",
-                        "La página que buscas está en otra branch del repositorio.",
-                        "Esta URL fue deprecada en la versión 2.0 de la realidad.",
-                        "Página no encontrada. Probablemente la borró alguien sin hacer backup.",
-                        "404: Página perdida en el merge conflict del tiempo.",
-                        "Esta página se fue de vacaciones sin avisar.",
-                        "Error 404: Página no encontrada. ¿Has probado reiniciar tu navegador?",
-                        "La página que buscas fue eliminada por un commit accidental.",
-                        "404: Página no encontrada. Quizás está en el limbo de los commits perdidos.",
+                        "A ocurrido un error inesperado. Nuestros desarrolladores están investigando si esto es un bug o un feature no documentado.",
+                        "Si ha causado algun problema es culpa de Phosphorus, no de nosotros.",
+                        "¡Ups! Parece que algo malio sal. Nuestros desarrolladores están trabajando para solucionarlo.",
                     ];
 
                     // Function to change the error message randomly
