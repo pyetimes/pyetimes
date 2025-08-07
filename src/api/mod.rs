@@ -21,7 +21,9 @@ pub fn routes() -> Router<AppState> {
 
     #[cfg(not(debug_assertions))]
     let cors = CorsLayer::new()
-        .allow_origin("https://pyetimes.com".parse().unwrap())
+        .allow_origin(cors::AllowOrigin::exact(
+            "https://pyetimes.com".parse().unwrap(),
+        ))
         .allow_methods(cors::Any)
         .allow_headers(cors::Any);
 
