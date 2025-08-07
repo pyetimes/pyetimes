@@ -4,6 +4,8 @@ use axum::{
     response::Html,
 };
 use magik::Renderable;
+#[cfg(debug_assertions)]
+use tower_http::cors::{self, CorsLayer};
 use tower_http::services::{ServeDir, ServeFile};
 
 use crate::{state::AppState, web::pages::NotFound};
