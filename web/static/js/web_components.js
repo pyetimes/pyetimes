@@ -48,6 +48,9 @@ class Time extends HTMLElement {
       month: "long",
       day: "numeric",
     });
+
+    this.textContent =
+      this.textContent[0].toUpperCase() + this.textContent.slice(1);
   }
 }
 

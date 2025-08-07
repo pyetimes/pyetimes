@@ -18,7 +18,7 @@ body {
   line-height: var(--font-line-height);
   color: var(--color-text-primary);
   background: var(--color-bg-primary);
-  padding: 20px;
+  padding: 0px 20px;
   min-height: 100vh;
   max-width: 1200px;
   margin: 0 auto;
