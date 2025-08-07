@@ -32,9 +32,23 @@
         window.localStorage.setItem('theme', document.documentElement.classList.contains('dark-theme') ? 'dark' : 'light');
     }
 
-    window.onload = function() {
-        if (window.localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark-theme');
+    window.addEventListener('load', function() {
+        const DARK_CLASS = 'dark-theme';
+        const savedTheme = window.localStorage.getItem('theme');
+
+        function setDarkMode(enabled) {
+            document.documentElement.classList.toggle(DARK_CLASS, enabled);
         }
-    };
+
+        if (savedTheme === null) {
+            setDarkMode(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        } else {
+            setDarkMode(savedTheme === 'dark'); 
+        }
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+            if (window.localStorage.getItem('theme') !== null) return;
+            setDarkMode(event.matches);
+        });
+    });
 </script>
