@@ -28,3 +28,6 @@ pub struct Register {}
 
 #[template(path = "./web/pages/about.mk")]
 pub struct About {}
+
+#[template(path = "./web/pages/error.mk")]
+pub struct Error {}

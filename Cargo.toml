@@ -10,7 +10,7 @@ tokio = "1.45.1"
 magik = { git = "https://github.com/darilrt/magik", package = "magik" }
 magik-macro = { git = "https://github.com/darilrt/magik", package = "magik-macro" }
 tower = "0.5.2"
-tower-http = { version = "0.6.6", features = ["fs", "trace"] }
+tower-http = { version = "0.6.6", features = ["fs", "trace", "cors"] }
 sqlx = { version = "0.8.6", features = [
     "runtime-tokio-rustls", # Runtime async y TLS
     "postgres",             # Driver for PostgreSQL
