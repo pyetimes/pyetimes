@@ -73,7 +73,7 @@ impl FeedRepo {
                         WHERE 
                             a2.section_id = a.section_id AND
                             a2.published = TRUE 
-                        ORDER BY a2.published_at ASC 
+                        ORDER BY a2.published_at DESC 
                         LIMIT 4
                     )
                 ORDER BY a.published_at DESC
