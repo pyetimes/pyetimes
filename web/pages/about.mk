@@ -10,8 +10,8 @@
     <head>
         {{ 
             Meta {
-                title: "Página No Encontrada - PyE Times",
-                description: "Lo sentimos, la página que buscas no existe.",
+                title: "Sobre PyE Times",
+                description: "Conoce más sobre PyE Times y cómo puedes contribuir.",
                 ..Default::default()
             }
         }}

@@ -76,8 +76,8 @@ impl ArticlesRepo {
             .bind(ArticlesRepo::lowercase_tags(tags))
             .bind(excerpt)
             .bind(title)
-            .bind(slug)
             .bind(section)
+            .bind(slug)
             .fetch_one(db)
             .await?;
 

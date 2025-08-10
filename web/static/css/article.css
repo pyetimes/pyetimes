@@ -1,9 +1,11 @@
-@import url("../../variables.css");
+@import url("./variables.css");
 
 .investigation-banner {
-  background: linear-gradient(135deg,
-      var(--color-primary-dark-article) 0%,
-      var(--color-primary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-dark-article) 0%,
+    var(--color-primary) 100%
+  );
   color: var(--color-white);
   text-align: center;
   padding: 12px;
@@ -142,9 +144,11 @@
 }
 
 .staff-section {
-  background: linear-gradient(135deg,
-      var(--color-bg-darkest) 0%,
-      var(--color-bg-darker) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-darkest) 0%,
+    var(--color-bg-darker) 100%
+  );
   color: var(--color-white);
   padding: 30px;
   border-radius: 10px;
@@ -293,7 +297,6 @@
   }
 
   .container {
-
     & p,
     li {
       font-size: 0.8em;

@@ -32,7 +32,6 @@
             {{ Header {} }}
 
             <div class="container">
-                <br/>
                 <div class="article-header-links">
                     <a href="/" class="back-link">← Volver al PyE Times</a>
                     {{
@@ -78,6 +77,8 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", () => {
+                {{ props.article.published.choose("return;", "") }}
+
                 const publishButton = document.getElementById("publish-button");
                 const dialog = document.getElementById("credentials-dialog");
                 const saveButton = document.getElementById("save-button");
