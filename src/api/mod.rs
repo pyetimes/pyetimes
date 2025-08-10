@@ -4,6 +4,7 @@ use axum::{
     response::Html,
 };
 use magik::Renderable;
+use tower_http::cors::{self, CorsLayer};
 use tower_http::services::{ServeDir, ServeFile};
 
 use crate::{state::AppState, web::pages::NotFound};
@@ -12,6 +13,20 @@ mod articles;
 mod authors;
 
 pub fn routes() -> Router<AppState> {
+    #[cfg(debug_assertions)]
+    let cors = CorsLayer::new()
+        .allow_origin(tower_http::cors::Any)
+        .allow_methods(cors::Any)
+        .allow_headers(cors::Any);
+
+    #[cfg(not(debug_assertions))]
+    let cors = CorsLayer::new()
+        .allow_origin(cors::AllowOrigin::exact(
+            "https://pyetimes.com".parse().unwrap(),
+        ))
+        .allow_methods(cors::Any)
+        .allow_headers(cors::Any);
+
     Router::new()
         .nest("/api/authors", authors::routes())
         .nest("/api/articles", articles::routes())
@@ -20,6 +35,7 @@ pub fn routes() -> Router<AppState> {
         .nest_service("/js", ServeDir::new("web/static/js"))
         .nest_service("/images", ServeDir::new("web/static/images"))
         .nest_service("/favicon.png", ServeFile::new("web/static/favicon.png"))
+        .layer(cors)
         .fallback(fallback_handler)
 }
 
