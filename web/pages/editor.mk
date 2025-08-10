@@ -87,8 +87,14 @@
                     <select id="section">
                         <option value="-1">Sección: Ninguna</option>
                         {{
+                            let selected_section = props.article.and_then(|a| a.section_id);
+
                             props.sections.iter().map(
-                                |section| format!("<option value=\"{}\">Sección: {}</option>", section.id, section.title)
+                                |section| format!(
+                                    "<option value=\"{}\" {}>Sección: {}</option>", 
+                                    section.id,
+                                    (Some(section.id) == selected_section).choose("selected", ""),
+                                    section.title)
                             ).collect::<String>()
                         }}
                     </select>
