@@ -1,6 +1,9 @@
 use sqlx::PgPool;
 
-use crate::models::{Article, ArticleCreate};
+use crate::{
+    error::Error,
+    models::{Article, ArticleCreate},
+};
 
 pub struct ArticlesRepo;
 
@@ -35,7 +38,7 @@ impl ArticlesRepo {
         Ok(article)
     }
 
-    pub async fn get_by_slug(db: &PgPool, slug: &str) -> Result<Option<Article>, sqlx::Error> {
+    pub async fn get_by_slug(db: &PgPool, slug: &str) -> Result<Option<Article>, Error> {
         let query = "SELECT * FROM articles WHERE slug = $1";
         let article = sqlx::query_as::<_, Article>(query)
             .bind(slug)
@@ -45,7 +48,7 @@ impl ArticlesRepo {
         Ok(article)
     }
 
-    pub async fn get_by_id(db: &PgPool, id: i32) -> Result<Option<Article>, sqlx::Error> {
+    pub async fn get_by_id(db: &PgPool, id: i32) -> Result<Option<Article>, Error> {
         let query = "SELECT * FROM articles WHERE id = $1";
         let article = sqlx::query_as::<_, Article>(query)
             .bind(id)
@@ -63,7 +66,7 @@ impl ArticlesRepo {
         tags: &[String],
         excerpt: &str,
         section: Option<i32>,
-    ) -> Result<Article, sqlx::Error> {
+    ) -> Result<Article, Error> {
         let query = r#"
             UPDATE articles
             SET content = $1, tags = $2, excerpt = $3, title = $4, section_id = $5
@@ -84,7 +87,7 @@ impl ArticlesRepo {
         Ok(article)
     }
 
-    pub async fn publish(db: &PgPool, id: i32) -> Result<Article, sqlx::Error> {
+    pub async fn publish(db: &PgPool, id: i32) -> Result<Article, Error> {
         let query = r#"
             UPDATE articles
             SET published = TRUE, published_at = NOW()
