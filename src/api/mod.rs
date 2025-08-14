@@ -5,11 +5,9 @@ use axum::{
 };
 use magik::Renderable;
 use tower_http::cors::{self, CorsLayer};
-use tower_http::services::{ServeDir, ServeFile};
 
 use crate::{
     error::ProblemDetails,
-    pages,
     state::AppState,
     web::{self, pages::NotFound},
 };
@@ -36,10 +34,6 @@ pub fn routes() -> Router<AppState> {
         .nest("/api/authors", authors::routes())
         .nest("/api/articles", articles::routes())
         .route("/health", axum::routing::get(health_check))
-        .nest_service("/css", ServeDir::new("web/static/css"))
-        .nest_service("/js", ServeDir::new("web/static/js"))
-        .nest_service("/images", ServeDir::new("web/static/images"))
-        .nest_service("/favicon.png", ServeFile::new("web/static/favicon.png"))
         .route("/error", axum::routing::get(error))
         .layer(cors)
         .fallback(fallback_handler)

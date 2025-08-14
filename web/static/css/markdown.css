@@ -1,6 +1,6 @@
 @import url("./variables.css");
 
-.article-content > :first-child::first-letter {
+.article-content> :first-child::first-letter {
   float: left;
   font-size: 4em;
   line-height: 1;
@@ -61,4 +61,14 @@
     font-family: monospace;
     font-size: 0.9em;
   }
+
+  ul {
+    margin-bottom: 20px;
+    padding: 0 0 0 20px;
+
+    li::marker {
+      color: var(--color-text-secondary);
+    }
+  }
+
 }

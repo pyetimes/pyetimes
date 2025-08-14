@@ -6,6 +6,7 @@ use axum::response::Html;
 use axum::{Router, extract::State, routing::get};
 use magik::Renderable;
 use tokio::join;
+use tower_http::services::{ServeDir, ServeFile};
 use tracing::info;
 
 use crate::middleware::CacheControlLayer;
@@ -34,6 +35,10 @@ pub fn routes() -> Router<AppState> {
             "/about",
             get(about).layer(CacheControlLayer::with_lifespan(3600)),
         )
+        .nest_service("/css", ServeDir::new("web/static/css"))
+        .nest_service("/js", ServeDir::new("web/static/js"))
+        .nest_service("/images", ServeDir::new("web/static/images"))
+        .nest_service("/favicon.png", ServeFile::new("web/static/favicon.png"))
 }
 
 async fn index(State(state): State<AppState>) -> Html<String> {
