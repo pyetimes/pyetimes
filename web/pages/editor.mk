@@ -35,11 +35,11 @@
         <!-- Toast UI Editor -->
         <link
         rel="stylesheet"
-        href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"
+        href="/css/toastui-editor.min.css"
         />
         
         <!-- Scripts -->
-        <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+        <script src="/js/toastui-editor-all.min.js"></script>
         <script src="/js/web_components.js"></script>
     </head>
     <body>
