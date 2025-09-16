@@ -241,13 +241,14 @@
 }
 
 .tag-link {
+  display: inline-block;
+  line-height: 1.2em;
   color: var(--color-text-muted);
   text-decoration: none;
   margin: 0px 5px;
   padding: 0px 5px;
   border-radius: 5px;
   border: 1px solid var(--color-border-secondary);
-  /* cursor: pointer; */
 }
 
 #publish-button {
