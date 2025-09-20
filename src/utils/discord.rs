@@ -8,7 +8,11 @@ use crate::{
 pub async fn notify_discord_bot(discord_bot: DiscordBotConfig, article: Article) {
     let article_update = ArticleDiscordUpdate {
         title: &article.title,
-        url: &format!("https://pyetimes.com/articles/{}", article.slug),
+        url: if article.published {
+            &format!("https://pyetimes.com/articles/{}", article.slug)
+        } else {
+            &format!("https://pyetimes.com/drafts/{}", article.slug)
+        },
         description: &article.excerpt,
         published: article.published,
     };

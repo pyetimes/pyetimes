@@ -5,7 +5,6 @@
         Meta,
         Header,
         Footer,
-        EditorHeader,
     };
 
     fn escape_string(s: &str) -> String {
@@ -36,18 +35,28 @@
         <!-- Toast UI Editor -->
         <link
         rel="stylesheet"
-        href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"
+        href="/css/toastui-editor.min.css"
         />
         
         <!-- Scripts -->
-        <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+        <script src="/js/toastui-editor-all.min.js"></script>
         <script src="/js/web_components.js"></script>
     </head>
     <body>
         <div class="main-wrapper">
-            {{ EditorHeader {} }}
+            {{ Header {} }}
 
             <div class="container">
+                <h2 class="editor-title">
+                    {{
+                        if props.article.is_some() {
+                            "Editar Artículo"
+                        } else {
+                            "Crear Nuevo Artículo"
+                        }
+                    }}
+                </h2>
+                <br/>
                 <div style="display: flex; gap: 10px">
                     <input
                         type="text"
@@ -78,8 +87,14 @@
                     <select id="section">
                         <option value="-1">Sección: Ninguna</option>
                         {{
+                            let selected_section = props.article.and_then(|a| a.section_id);
+
                             props.sections.iter().map(
-                                |section| format!("<option value=\"{}\">Sección: {}</option>", section.id, section.title)
+                                |section| format!(
+                                    "<option value=\"{}\" {}>Sección: {}</option>", 
+                                    section.id,
+                                    (Some(section.id) == selected_section).choose("selected", ""),
+                                    section.title)
                             ).collect::<String>()
                         }}
                     </select>

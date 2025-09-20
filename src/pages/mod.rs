@@ -1,8 +1,11 @@
+use std::collections::HashMap;
+
 use axum::extract::{Path, Query};
 use axum::response::Html;
 use axum::{Router, extract::State, routing::get};
 use magik::Renderable;
 use tokio::join;
+use tower_http::services::{ServeDir, ServeFile};
 use tracing::info;
 
 use crate::error::{DomainErrors, Error};
@@ -27,14 +30,23 @@ pub fn routes() -> Router<AppState> {
         )
         .route("/drafts/{slug}", get(draft_article_page))
         .route("/register", get(register))
+        .route(
+            "/about",
+            get(about).layer(CacheControlLayer::with_lifespan(3600)),
+        )
+        .nest_service("/css", ServeDir::new("web/static/css"))
+        .nest_service("/js", ServeDir::new("web/static/js"))
+        .nest_service("/images", ServeDir::new("web/static/images"))
+        .nest_service("/favicon.png", ServeFile::new("web/static/favicon.png"))
 }
 
 async fn index(State(state): State<AppState>) -> Html<String> {
     match FeedRepo::get(&state.db).await {
-        Ok((main_story, sections)) => Html(
+        Ok((main_story, sections, authors)) => Html(
             pages::Index {
                 main_story,
                 sections,
+                authors,
             }
             .render(),
         ),
@@ -44,6 +56,7 @@ async fn index(State(state): State<AppState>) -> Html<String> {
                 pages::Index {
                     main_story: None,
                     sections: Vec::new(),
+                    authors: HashMap::new(),
                 }
                 .render(),
             )
@@ -111,7 +124,9 @@ async fn article_page_impl(
         if article.published {
             return Ok(Html(pages::NotFound {}.render()));
         }
-    } else if !article.published {
+    };
+
+    if is_draft == article.published {
         return Ok(Html(pages::NotFound {}.render()));
     }
 
@@ -132,4 +147,8 @@ async fn article_page_impl(
 
 pub async fn register() -> Html<String> {
     Html(pages::Register {}.render())
+}
+
+pub async fn about() -> Html<String> {
+    Html(pages::About {}.render())
 }

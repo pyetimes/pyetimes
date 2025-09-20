@@ -32,7 +32,6 @@
             {{ Header {} }}
 
             <div class="container">
-                <br/>
                 <div class="article-header-links">
                     <a href="/" class="back-link">← Volver al PyE Times</a>
                     {{
@@ -54,7 +53,7 @@
                     <div class="byline">Por {{ props.author.name }}</div>
                     <div class="date-info">Publicado: {{
                         match props.article.published_at {
-                            Some(date) if props.article.published => format!("<x-time datetime=\"{}\"></x-time>", date.and_utc().timestamp()),
+                            Some(date) if props.article.published => format!("<x-time timestamp=\"{}\"></x-time>", date.and_utc().timestamp()),
                             _ => format!("No publicado aún ({}) <button id=\"publish-button\">Publicar</button>", props.article.id),
                         }
                     }}
@@ -78,6 +77,8 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", () => {
+                {{ props.article.published.choose("return;", "") }}
+
                 const publishButton = document.getElementById("publish-button");
                 const dialog = document.getElementById("credentials-dialog");
                 const saveButton = document.getElementById("save-button");

@@ -18,8 +18,8 @@
   --color-border-gray: #adb5bd;
 
   /* Links */
-  --color-link: #007bff;
-  --color-link-hover: #d32f2f;
+  --color-link: #004b9b;
+  --color-link-hover: #0062ca;
 
   /* articles vars */
 
@@ -58,6 +58,8 @@
   --color-discord-button-hover: #4752c4;
 
   /* fonts */
-  --font-family: "Playfair Display", serif, Helvetica, Roboto, Arial, sans-serif;
+  /* --font-family: "Playfair Display", serif, Helvetica, Roboto, Arial, sans-serif; */
+  --font-family-title: "Libre Franklin", sans-serif;
+  --font-family: "Noto Serif", serif;
   --font-line-height: 1.6;
 }

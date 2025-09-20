@@ -1,4 +1,4 @@
-@import url("../../variables.css");
+@import url("./variables.css");
 
 .investigation-banner {
   background: linear-gradient(
@@ -18,8 +18,6 @@
 
 .container {
   max-width: 1000px;
-  margin: 0 auto;
-  padding: 0px 20px;
 }
 
 .article-header {
@@ -225,7 +223,6 @@
 
 .back-link {
   display: inline-block;
-  margin-bottom: 20px;
   color: var(--color-primary);
   text-decoration: none;
   font-size: 0.9em;
@@ -237,8 +234,21 @@
 
 .article-header-links {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
+}
+
+.tag-link {
+  display: inline-block;
+  line-height: 1.2em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  margin: 0px 5px;
+  padding: 0px 5px;
+  border-radius: 5px;
+  border: 1px solid var(--color-border-secondary);
 }
 
 #publish-button {
@@ -271,10 +281,6 @@
 }
 
 @media (width <=40rem) {
-  .back-link {
-    font-size: 0.7em;
-  }
-
   .headline {
     font-size: 1.8em;
   }
@@ -292,8 +298,6 @@
   }
 
   .container {
-    padding: 20px 15px;
-
     & p,
     li {
       font-size: 0.8em;
