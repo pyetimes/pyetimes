@@ -5,7 +5,7 @@ use axum::{
 };
 
 use crate::{
-    error::{DomainErrors, Error},
+    error::{DomainErrors, Error, ProblemDetails},
     models::{Article, ArticleCreate, AuthorCredentials},
     repo::ArticlesRepo,
     state::AppState,
@@ -21,13 +21,13 @@ pub fn routes() -> Router<AppState> {
 async fn post(
     State(state): State<AppState>,
     Json(info): Json<ArticleCreate>,
-) -> Result<Json<Article>, Error> {
+) -> Result<Json<Article>, ProblemDetails<'static>> {
     let author = validate_user(&state.db, &info.author.email, &info.author.password).await?;
 
     let article = ArticlesRepo::get_by_slug(&state.db, &info.slug).await;
 
     let Ok(article) = article else {
-        return Err(DomainErrors::ArticleNotFound)?;
+        return Err(DomainErrors::ResourceNotFound)?;
     };
 
     let section = if info.section < 0 {
@@ -67,7 +67,7 @@ async fn post(
             Some(code) if code == "23505" => {
                 Err(DomainErrors::ArticleAlreadyExists { slug: info.slug })?
             }
-            _ => Err(Error::Database(sqlx::Error::Database(db_err))),
+            _ => Err(Error::Database(sqlx::Error::Database(db_err)))?,
         };
     }
 
@@ -92,7 +92,7 @@ async fn publish(
     State(state): State<AppState>,
     Path(id): Path<i32>,
     Json(credentials): Json<AuthorCredentials>,
-) -> Result<Json<SuccessResponse>, Error> {
+) -> Result<Json<SuccessResponse>, ProblemDetails<'static>> {
     let author = validate_user(&state.db, &credentials.email, &credentials.password).await?;
 
     if !author.can_publish {

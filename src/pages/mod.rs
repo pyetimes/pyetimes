@@ -8,7 +8,7 @@ use tokio::join;
 use tower_http::services::{ServeDir, ServeFile};
 use tracing::info;
 
-use crate::error::{DomainErrors, Error};
+use crate::error::{DomainErrors, ProblemDetails};
 use crate::middleware::CacheControlLayer;
 use crate::repo::{ArticlesRepo, AuthorsRepo, FeedRepo, SectionsRepo};
 use crate::state::AppState;
@@ -98,14 +98,14 @@ async fn editor(State(state): State<AppState>, id: Query<GetParams>) -> Html<Str
 async fn published_article_page(
     State(state): State<AppState>,
     Path(slug): Path<String>,
-) -> Result<Html<String>, Error> {
+) -> Result<Html<String>, ProblemDetails<'static>> {
     article_page_impl(state, slug, false).await
 }
 
 async fn draft_article_page(
     State(state): State<AppState>,
     Path(slug): Path<String>,
-) -> Result<Html<String>, Error> {
+) -> Result<Html<String>, ProblemDetails<'static>> {
     article_page_impl(state, slug, true).await
 }
 
@@ -113,7 +113,7 @@ async fn article_page_impl(
     state: AppState,
     slug: String,
     is_draft: bool,
-) -> Result<Html<String>, Error> {
+) -> Result<Html<String>, ProblemDetails<'static>> {
     let article = ArticlesRepo::get_by_slug(&state.db, &slug).await.map_err(DomainErrors::FetchingArticle)?;
 
     let Some(article) = article else {
@@ -133,7 +133,7 @@ async fn article_page_impl(
     let author = AuthorsRepo::get_by_id(&state.db, article.author_id).await.map_err(DomainErrors::ErrorFetchingAuthor)?;
 
     let Some(author) = author else {
-        return Err(DomainErrors::AuthorNotFound)?;
+        return Err(DomainErrors::ResourceNotFound)?;
     };
 
     Ok(Html(

@@ -5,7 +5,7 @@ use axum::{
 };
 
 use crate::{
-    error::{DomainErrors, Error}, models::{Author, AuthorCreate}, repo::AuthorsRepo, state::AppState
+    error::{DomainErrors, ProblemDetails}, models::{Author, AuthorCreate}, repo::AuthorsRepo, state::AppState
 };
 
 pub fn routes() -> Router<AppState> {
@@ -24,7 +24,7 @@ async fn get_authors(State(state): State<AppState>) -> Json<Vec<Author>> {
 async fn post_author(
     State(state): State<AppState>,
     Json(author): Json<AuthorCreate>,
-) -> Result<Json<Author>, Error> {
+) -> Result<Json<Author>, ProblemDetails<'static>> {
     let author = AuthorsRepo::create(&state.db, &author).await.map_err(DomainErrors::CreatingAuthor)?;
 
     Ok(Json(author))
@@ -33,11 +33,11 @@ async fn post_author(
 async fn get_author_by_id(
     State(state): State<AppState>,
     Path(id): axum::extract::Path<i32>,
-) -> Result<Json<Author>, Error> {
+) -> Result<Json<Author>, ProblemDetails<'static>> {
     let author = AuthorsRepo::get_by_id(&state.db, id).await.map_err(DomainErrors::ErrorFetchingAuthor)?;
 
     match author {
         Some(author) => Ok(Json(author)),
-        None => Err(DomainErrors::AuthorNotFound)?
+        None => Err(DomainErrors::ResourceNotFound)?
     }
 }
