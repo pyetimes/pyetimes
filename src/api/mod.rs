@@ -50,7 +50,7 @@ async fn fallback_handler(_uri: Uri) -> (StatusCode, Html<String>) {
 async fn error() -> Html<String> {
     Html(
         web::pages::Error {
-            details: ProblemDetails::from(crate::error::Error::NotFound),
+            details: ProblemDetails::from(crate::error::DomainErrors::ResourceNotFound),
         }
         .render(),
     )
