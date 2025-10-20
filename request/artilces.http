@@ -1,0 +1,17 @@
+### Create Article
+
+POST http://localhost:3000/api/articles
+Content-Type: application/json
+
+{
+  "title": "Test",
+  "slug": "test",
+  "excerpt": "This is a test article.",
+  "tags": ["test"],
+  "content": "This is the content of the test article.",
+  "author": {
+    "email": "example@example.com",
+    "password": "example"
+  },
+  "section": 1
+}

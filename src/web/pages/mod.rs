@@ -1,4 +1,5 @@
 mod editor;
+pub mod games;
 
 use std::collections::HashMap;
 
@@ -33,3 +34,6 @@ pub struct About {}
 pub struct Error<'a> {
     pub details: ProblemDetails<'a>,
 }
+
+#[template(path = "./web/pages/games.mk")]
+pub struct Games {}

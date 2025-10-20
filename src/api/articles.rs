@@ -63,6 +63,7 @@ async fn post(
     let article = ArticlesRepo::create(&state.db, author.id, &info).await;
 
     if let Err(sqlx::Error::Database(db_err)) = article {
+        tracing::info!("{:?}", db_err);
         return match db_err.code() {
             Some(code) if code == "23505" => {
                 Err(DomainErrors::ArticleAlreadyExists { slug: info.slug })?

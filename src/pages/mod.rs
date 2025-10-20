@@ -34,10 +34,20 @@ pub fn routes() -> Router<AppState> {
             "/about",
             get(about).layer(CacheControlLayer::with_lifespan(3600)),
         )
+        // .merge(games())
         .nest_service("/css", ServeDir::new("web/static/css"))
         .nest_service("/js", ServeDir::new("web/static/js"))
         .nest_service("/images", ServeDir::new("web/static/images"))
         .nest_service("/favicon.png", ServeFile::new("web/static/favicon.png"))
+}
+
+fn games() -> Router<AppState> {
+    Router::new()
+        .route("/games", get(|| async { Html(pages::Games {}.render()) }))
+        .route(
+            "/games/snaked",
+            get(|| async { Html(pages::games::Snaked {}.render()) }),
+        )
 }
 
 async fn index(State(state): State<AppState>) -> Html<String> {
@@ -114,7 +124,9 @@ async fn article_page_impl(
     slug: String,
     is_draft: bool,
 ) -> Result<Html<String>, ProblemDetails<'static>> {
-    let article = ArticlesRepo::get_by_slug(&state.db, &slug).await.map_err(DomainErrors::FetchingArticle)?;
+    let article = ArticlesRepo::get_by_slug(&state.db, &slug)
+        .await
+        .map_err(DomainErrors::FetchingArticle)?;
 
     let Some(article) = article else {
         return Ok(Html(pages::NotFound {}.render()));
@@ -130,7 +142,9 @@ async fn article_page_impl(
         return Ok(Html(pages::NotFound {}.render()));
     }
 
-    let author = AuthorsRepo::get_by_id(&state.db, article.author_id).await.map_err(DomainErrors::ErrorFetchingAuthor)?;
+    let author = AuthorsRepo::get_by_id(&state.db, article.author_id)
+        .await
+        .map_err(DomainErrors::ErrorFetchingAuthor)?;
 
     let Some(author) = author else {
         return Err(DomainErrors::ResourceNotFound)?;

@@ -17,6 +17,7 @@
     <nav id="navbar" class="navbar">
         <ul class="nav-links">
             <li><a href="/">Inicio</a></li>
+            <!-- <li><a href="/games">Juegos</a></li> -->
             <li><a href="/about">Sobre Nosotros</a></li>
         </ul>
     </nav>
@@ -43,7 +44,7 @@
         if (savedTheme === null) {
             setDarkMode(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
         } else {
-            setDarkMode(savedTheme === 'dark'); 
+            setDarkMode(savedTheme === 'dark');
         }
 
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
