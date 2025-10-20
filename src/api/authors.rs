@@ -5,13 +5,16 @@ use axum::{
 };
 
 use crate::{
-    error::{DomainErrors, ProblemDetails}, models::{Author, AuthorCreate}, repo::AuthorsRepo, state::AppState
+    error::{DomainErrors, ProblemDetails}, 
+    models::{Author, AuthorCreate, AuthorCredentials}, 
+    repo::AuthorsRepo, 
+    state::AppState,
+    utils::auth::validate_user,
 };
 
 pub fn routes() -> Router<AppState> {
     Router::new()
-        .route("/", get(get_authors))
-        .route("/", post(post_author))
+        .route("/", get(get_authors).post(post_author))
         .route("/{id}", get(get_author_by_id))
 }
 
@@ -40,4 +43,27 @@ async fn get_author_by_id(
         Some(author) => Ok(Json(author)),
         None => Err(DomainErrors::ResourceNotFound)?
     }
+}
+
+#[derive(serde::Serialize)]
+pub struct LoginResponse {
+    pub author: Author,
+    pub message: String,
+}
+
+pub async fn login_handler(
+    State(state): State<AppState>,
+    Json(credentials): Json<AuthorCredentials>,
+) -> Result<Json<LoginResponse>, ProblemDetails<'static>> {
+    tracing::info!("Login attempt for email: {}", credentials.email);
+    
+    let author = validate_user(&state.db, &credentials.email, &credentials.password)
+        .await?;
+
+    tracing::info!("Login successful for user: {}", author.name);
+
+    Ok(Json(LoginResponse {
+        author,
+        message: "Login successful".to_string(),
+    }))
 }

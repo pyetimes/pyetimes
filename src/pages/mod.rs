@@ -30,9 +30,15 @@ pub fn routes() -> Router<AppState> {
         )
         .route("/drafts/{slug}", get(draft_article_page))
         .route("/register", get(register))
+        .route("/login", get(login))
+        .route("/profile", get(profile))
         .route(
             "/about",
             get(about).layer(CacheControlLayer::with_lifespan(3600)),
+        )
+        .route(
+            "/search",
+            get(search).layer(CacheControlLayer::with_lifespan(3600)),
         )
         .nest_service("/css", ServeDir::new("web/static/css"))
         .nest_service("/js", ServeDir::new("web/static/js"))
@@ -149,6 +155,18 @@ pub async fn register() -> Html<String> {
     Html(pages::Register {}.render())
 }
 
+pub async fn login() -> Html<String> {
+    Html(pages::Login {}.render())
+}
+
+pub async fn profile() -> Html<String> {
+    Html(pages::Profile {}.render())
+}
+
 pub async fn about() -> Html<String> {
     Html(pages::About {}.render())
+}
+
+pub async fn search() -> Html<String> {
+    Html(pages::Search {}.render())
 }

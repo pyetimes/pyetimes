@@ -1,0 +1,54 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:17-alpine
+    container_name: pyetimes_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pyetimes
+      POSTGRES_PASSWORD: pyetimes_password
+      POSTGRES_DB: pyetimes_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - pyetimes_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pyetimes -d pyetimes_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PyE Times Application
+  app:
+    image: pyetimes:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pyetimes_app
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://pyetimes:pyetimes_password@postgres:5432/pyetimes_db
+      DISCORD_BOT_URL: ${DISCORD_BOT_URL:-}
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-https://pyetimes.com}
+      DOMAIN: ${DOMAIN:-https://pyetimes.com}
+      RUST_LOG: ${RUST_LOG:-info}
+    ports:
+      - "3000:3000"
+    networks:
+      - pyetimes_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./web:/app/web:ro
+
+networks:
+  pyetimes_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

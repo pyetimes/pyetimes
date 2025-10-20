@@ -15,7 +15,8 @@ use crate::{
 pub fn routes() -> Router<AppState> {
     Router::new()
         .route("/", routing::post(post))
-        .route("/{id}/publish", routing::post(publish)) // Temporalmente comentado
+        .route("/author/{author_id}", routing::get(get_by_author))
+        .route("/{id}/publish", routing::post(publish))
 }
 
 async fn post(
@@ -81,6 +82,17 @@ async fn post(
     }
 
     Ok(Json(article))
+}
+
+async fn get_by_author(
+    State(state): State<AppState>,
+    Path(author_id): Path<i32>,
+) -> Result<Json<Vec<Article>>, ProblemDetails<'static>> {
+    let articles = ArticlesRepo::get_by_author_id(&state.db, author_id)
+        .await
+        .map_err(DomainErrors::FetchingArticle)?;
+
+    Ok(Json(articles))
 }
 
 #[derive(serde::Serialize)]

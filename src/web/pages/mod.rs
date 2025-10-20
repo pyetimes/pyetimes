@@ -26,8 +26,17 @@ pub struct Article<'a> {
 #[template(path = "./web/pages/register.mk")]
 pub struct Register {}
 
+#[template(path = "./web/pages/login.mk")]
+pub struct Login {}
+
+#[template(path = "./web/pages/profile.mk")]
+pub struct Profile {}
+
 #[template(path = "./web/pages/about.mk")]
 pub struct About {}
+
+#[template(path = "./web/pages/search.mk")]
+pub struct Search {}
 
 #[template(path = "./web/pages/error.mk")]
 pub struct Error<'a> {

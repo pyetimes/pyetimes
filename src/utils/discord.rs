@@ -6,12 +6,15 @@ use crate::{
 };
 
 pub async fn notify_discord_bot(discord_bot: DiscordBotConfig, article: Article) {
+    let domain = std::env::var("DOMAIN")
+        .unwrap_or_else(|_| "https://pyetimes.com".to_string());
+    
     let article_update = ArticleDiscordUpdate {
         title: &article.title,
         url: if article.published {
-            &format!("https://pyetimes.com/articles/{}", article.slug)
+            &format!("{}/articles/{}", domain, article.slug)
         } else {
-            &format!("https://pyetimes.com/drafts/{}", article.slug)
+            &format!("{}/drafts/{}", domain, article.slug)
         },
         description: &article.excerpt,
         published: article.published,

@@ -7,7 +7,7 @@ use crate::{
 pub struct ArticlesRepo;
 
 impl ArticlesRepo {
-    // function to lowercase the tags
+    /// Converts tags to lowercase and trims whitespace
     pub fn lowercase_tags(tags: &[String]) -> Vec<String> {
         tags.iter().map(|tag| tag.trim().to_lowercase()).collect()
     }
@@ -30,7 +30,7 @@ impl ArticlesRepo {
             .bind(author_id)
             .bind(ArticlesRepo::lowercase_tags(&article.tags))
             .bind(&article.excerpt)
-            .bind(article.section) // Assuming section is an Option<i32>
+            .bind(article.section)
             .fetch_one(db)
             .await?;
 
@@ -59,7 +59,7 @@ impl ArticlesRepo {
 
     pub async fn update(
         db: &PgPool,
-        slug: &str, // assuming slug is used as id for this example
+        slug: &str,
         title: &str,
         content: &str,
         tags: &[String],
@@ -100,5 +100,20 @@ impl ArticlesRepo {
             .await?;
 
         Ok(article)
+    }
+
+    pub async fn get_by_author_id(db: &PgPool, author_id: i32) -> Result<Vec<Article>, sqlx::Error> {
+        let query = r"
+            SELECT * FROM articles 
+            WHERE author_id = $1 
+            ORDER BY created_at DESC
+        ";
+
+        let articles = sqlx::query_as::<_, Article>(query)
+            .bind(author_id)
+            .fetch_all(db)
+            .await?;
+
+        Ok(articles)
     }
 }

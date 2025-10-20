@@ -168,23 +168,3 @@ impl IntoResponse for ProblemDetails<'_> {
         (StatusCode::from_u16(self.status).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR), axum::Json(body)).into_response()
     }
 }
-
-// impl IntoResponse for Error {
-//     fn into_response(self) -> Response {
-//         match self {
-//             Error::Database(err) => {
-//                 tracing::error!("Database error: {}", err);
-//                 (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error").into_response()
-//             }
-//             Error::DatabaseConnection(err) => {
-//                 tracing::error!("Database error: {}", err);
-//                 (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error").into_response()
-//             }
-//             Error::Unauthorized => {
-//                 tracing::info!("Unauthorized access");
-//                 (StatusCode::UNAUTHORIZED, "Unauthorized").into_response()
-//             }
-//             Error::DomainErrors(e) => e.into_response(),
-//         }
-//     }
-// }

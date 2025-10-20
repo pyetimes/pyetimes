@@ -17,11 +17,33 @@
     <nav id="navbar" class="navbar">
         <ul class="nav-links">
             <li><a href="/">Inicio</a></li>
+            <li><a href="/search">Búsqueda</a></li>
             <li><a href="/about">Sobre Nosotros</a></li>
+            <li id="nav-auth-links">
+                <a href="/login" id="nav-login">Iniciar Sesión</a>
+            </li>
+            <li id="nav-profile-link" style="display: none;">
+                <a href="/profile" id="nav-profile">Mi Perfil</a>
+            </li>
         </ul>
     </nav>
 </header>
 <script>
+    // Check authentication status
+    (function() {
+        const currentUser = localStorage.getItem('currentUser');
+        const loginLink = document.getElementById('nav-login');
+        const profileLink = document.getElementById('nav-profile-link');
+        const authLinks = document.getElementById('nav-auth-links');
+        
+        if (currentUser) {
+            const user = JSON.parse(currentUser);
+            authLinks.style.display = 'none';
+            profileLink.style.display = 'block';
+            document.getElementById('nav-profile').textContent = user.name;
+        }
+    })();
+
     function toggleNav() {
         const navbar = document.getElementById('navbar');
         navbar.classList.toggle('active');

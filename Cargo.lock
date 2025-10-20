@@ -1414,13 +1414,16 @@ name = "pyetimes"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "base64",
  "bcrypt",
  "chrono",
  "dotenv",
  "futures-util",
+ "lazy_static",
  "magik",
  "magik-macro",
  "pulldown-cmark",
+ "rand",
  "reqwest",
  "serde",
  "serde_json",

@@ -103,17 +103,51 @@
                 <div id="editor"></div>
 
                 <div class="form">
-                    <input type="text" id="email" placeholder="Email" />
-                    <input type="password" id="password" placeholder="Contraseña" />
+                    <div id="auth-info" class="auth-info" style="display: none;">
+                        <p>Sesión iniciada como: <strong id="current-user-name"></strong></p>
+                    </div>
                     <button id="save-button" class="save-button">{{
                         props.article.map_or("Crear Artículo".to_string(), |_| "Actualizar Artículo".to_string())
                     }}</button>
                 </div>
             </div>
         </div>
+
+        <style>
+            .auth-info {
+                background: var(--color-bg-secondary);
+                padding: 12px 16px;
+                border-radius: 4px;
+                margin-bottom: 15px;
+                border-left: 3px solid var(--color-accent);
+            }
+
+            .auth-info p {
+                margin: 0;
+                color: var(--color-text-secondary);
+            }
+
+            .auth-info strong {
+                color: var(--color-text-primary);
+            }
+        </style>
         
         <script>
             document.addEventListener("DOMContentLoaded", function () {
+                // Check authentication
+                const currentUser = localStorage.getItem('currentUser');
+                if (!currentUser) {
+                    alert("Debes iniciar sesión para crear o editar artículos");
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const user = JSON.parse(currentUser);
+
+                // Display current user info
+                document.getElementById('current-user-name').textContent = user.name;
+                document.getElementById('auth-info').style.display = 'block';
+
                 const editor = new toastui.Editor({
                     el: document.getElementById("editor"),
                     height: "700px",
@@ -125,11 +159,6 @@
                             |a| escape_string(&a.content))
                     }}", // contenido inicial
                 });
-
-                function validateEmail(email) {
-                    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    return re.test(String(email).toLowerCase());
-                }
 
                 function validateSlug(slug) {
                     const re = /^[a-zA-Z0-9-_]+$/;
@@ -143,8 +172,6 @@
                     document.getElementById("slug").value = "";
                     document.getElementById("excerpt").value = "";
                     document.getElementById("tags").value = "";
-                    document.getElementById("email").value = "";
-                    document.getElementById("password").value = "";
                     editor.setMarkdown("");
                     saveButton.textContent = "Actualizar Artículo";
                 }
@@ -152,20 +179,22 @@
                 saveButton.addEventListener("click", () => {
                     // disable button to prevent multiple clicks
                     saveButton.disabled = true;
+                    saveButton.textContent = "Guardando...";
 
                     const markdown = editor.getMarkdown();
                     let data = {
-                        title: document.getElementById("title").value,
-                        slug: document.getElementById("slug").value,
-                        excerpt: document.getElementById("excerpt").value,
+                        title: document.getElementById("title").value.trim(),
+                        slug: document.getElementById("slug").value.trim(),
+                        excerpt: document.getElementById("excerpt").value.trim(),
                         tags: document
                         .getElementById("tags")
                         .value.split(",")
-                        .map((tag) => tag.trim().toLowerCase()), // split tags by comma and trim whitespace
+                        .map((tag) => tag.trim().toLowerCase())
+                        .filter(tag => tag.length > 0), // split tags by comma and trim whitespace
                         content: markdown,
                         author: {
-                            email: document.getElementById("email").value,
-                            password: document.getElementById("password").value,
+                            email: user.email,
+                            password: user.password,
                         },
                         section: parseInt(document.getElementById("section").value, 10),
                     };
@@ -174,12 +203,11 @@
                         !data.title ||
                         !data.slug ||
                         !data.excerpt ||
-                        !data.content ||
-                        !data.author.email ||
-                        !data.author.password
+                        !data.content
                     ) {
-                        alert("Por favor, completa todos los campos.");
+                        alert("Por favor, completa todos los campos (título, slug, extracto y contenido).");
                         saveButton.disabled = false;
+                        saveButton.textContent = document.getElementById("title").value ? "Actualizar Artículo" : "Crear Artículo";
                         return;
                     }
 
@@ -188,12 +216,7 @@
                             "El slug solo puede contener letras, números, guiones y guiones bajos."
                         );
                         saveButton.disabled = false;
-                        return;
-                    }
-                    
-                    if (!validateEmail(data.author.email)) {
-                        alert("Por favor, ingresa un correo electrónico válido.");
-                        saveButton.disabled = false;
+                        saveButton.textContent = document.getElementById("title").value ? "Actualizar Artículo" : "Crear Artículo";
                         return;
                     }
 
@@ -207,19 +230,20 @@
                     })
                     .then(async (response) => {
                         if (!response.ok) {
-                            alert(await response.text());
-                            return;
+                            const errorText = await response.text();
+                            throw new Error(errorText);
                         }
                         
-                        let redirectUrl = "/drafts/" + (await response.json()).slug;
+                        const result = await response.json();
+                        alert("¡Artículo guardado exitosamente!");
+                        
+                        let redirectUrl = "/drafts/" + result.slug;
                         window.location.href = redirectUrl;
                     })
                     .catch((error) => {
                         alert("Error al guardar el artículo: " + error.message);
-                    })
-                    .finally(() => {
-                        // re-enable button after request
                         saveButton.disabled = false;
+                        saveButton.textContent = document.getElementById("title").value ? "Actualizar Artículo" : "Crear Artículo";
                     });
                 });
             });
