@@ -1,7 +1,7 @@
 {{
     use serde_json::json;
     use pulldown_cmark::{Parser, html};
-    use crate::web::components::{ 
+    use crate::web::components::{
         Meta,
         Header,
         Footer,
@@ -15,7 +15,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        {{ 
+        {{
             Meta {
                 title: if props.article.is_some() {
                     "Editar Artículo - PyE Times"
@@ -26,7 +26,7 @@
                 ..Default::default()
             }
         }}
-        
+
         <!-- Styles -->
         <link rel="stylesheet" href="/css/global.css" />
         <link rel="stylesheet" href="/css/layout.css" />
@@ -37,7 +37,7 @@
         rel="stylesheet"
         href="/css/toastui-editor.min.css"
         />
-        
+
         <!-- Scripts -->
         <script src="/js/toastui-editor-all.min.js"></script>
         <script src="/js/web_components.js"></script>
@@ -60,29 +60,9 @@
                 <div style="display: flex; gap: 10px">
                     <input
                         type="text"
-                        id="title"
-                        placeholder="Título del Artículo"
-                        value="{{ props.article.map_or("".to_string(), |a| a.title.to_string()) }}"
-                    />
-                    <input
-                        type="text"
                         id="slug"
                         placeholder="URL Amigable"
                         value="{{ props.article.map_or("".to_string(), |a| a.slug.to_string()) }}"
-                    />
-                </div>
-                <input
-                    type="text"
-                    id="excerpt"
-                    placeholder="Extracto del Artículo"
-                    value="{{ props.article.map_or("".to_string(), |a| a.excerpt.to_string()) }}"
-                />
-                <div style="display: flex; gap: 10px">
-                    <input
-                        type="text"
-                        id="tags"
-                        placeholder="Etiquetas (separadas por comas)"
-                        value="{{ props.article.map_or("".to_string(), |a| a.tags.join(", ")) }}"
                     />
                     <select id="section">
                         <option value="-1">Sección: Ninguna</option>
@@ -91,7 +71,7 @@
 
                             props.sections.iter().map(
                                 |section| format!(
-                                    "<option value=\"{}\" {}>Sección: {}</option>", 
+                                    "<option value=\"{}\" {}>Sección: {}</option>",
                                     section.id,
                                     (Some(section.id) == selected_section).choose("selected", ""),
                                     section.title)
@@ -99,7 +79,26 @@
                         }}
                     </select>
                 </div>
-                
+                <input
+                    type="text"
+                    id="tags"
+                    placeholder="Etiquetas (separadas por comas)"
+                    value="{{ props.article.map_or("".to_string(), |a| a.tags.join(", ")) }}"
+                />
+                <input
+                    type="text"
+                    id="title"
+                    placeholder="Título del Artículo"
+                    value="{{ props.article.map_or("".to_string(), |a| a.title.to_string()) }}"
+                />
+                <textarea
+                    type="text"
+                    id="excerpt"
+                    placeholder="Extracto del Artículo"
+                    value="{{ props.article.map_or("".to_string(), |a| a.excerpt.to_string()) }}"
+                    rows="5"
+                ></textarea>
+
                 <div id="editor"></div>
 
                 <div class="form">
@@ -111,7 +110,7 @@
                 </div>
             </div>
         </div>
-        
+
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const editor = new toastui.Editor({
@@ -119,9 +118,9 @@
                     height: "700px",
                     initialEditType: "markdown", // o 'wysiwyg'
                     previewStyle: "tab", // o 'vertical'
-                    initialValue: "{{ 
+                    initialValue: "{{
                         props.article.map_or(
-                            "# Bienvenido al Editor de PyE Times\\n\\nEscribe tu artículo aquí...".to_string(), 
+                            "# Bienvenido al Editor de PyE Times\\n\\nEscribe tu artículo aquí...".to_string(),
                             |a| escape_string(&a.content))
                     }}", // contenido inicial
                 });
@@ -190,7 +189,7 @@
                         saveButton.disabled = false;
                         return;
                     }
-                    
+
                     if (!validateEmail(data.author.email)) {
                         alert("Por favor, ingresa un correo electrónico válido.");
                         saveButton.disabled = false;
@@ -210,7 +209,7 @@
                             alert(await response.text());
                             return;
                         }
-                        
+
                         let redirectUrl = "/drafts/" + (await response.json()).slug;
                         window.location.href = redirectUrl;
                     })
